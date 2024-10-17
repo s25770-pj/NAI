@@ -1,50 +1,53 @@
-class Chomp(object):
-    def __init__(self, board_size: list[int]):
+from easyAI import TwoPlayerGame, Negamax, Human_Player, AI_Player
+
+class Chomp(TwoPlayerGame):
+    def __init__(self, players=None):
         """
         Board initialization
         """
-        self.size = board_size
-        self.board = [[1 for _ in range(board_size[0])] for _ in range(board_size[1])]
-        self.player = 1
-        self.game_over = False
+        self.players = players
+        self.x = 5
+        self.y = 5
+        self.board = [[1 for _ in range(self.x)] for _ in range(self.y)]
+        self.current_player = 1
 
-    def display_board(self):
+    def possible_moves(self):
+        moves = []
+        for y in range(self.y):
+            for x in range(self.x):
+                if self.board[y][x] == 1:
+                    moves.append(f"{x + 1}{y + 1}")  # Store as string with 1-based index
+        print(f'moves: {moves}')
+        return moves
+
+    def make_move(self, move):
         """
-        Displays board
+        Cuts the board based on field coordinates.
+        """
+        x = int(move[0]) - 1
+        y = int(move[1]) - 1
+        print(f'x: {x}, y: {y}')
+
+        if self.board[y][x] == 1:  # Check if the field is available
+            # Cut the board
+            for i in range(y, self.y):
+                for j in range(x, self.x):
+                    self.board[i][j] = 0
+
+    def win(self):
+        return len(self.possible_moves()) == 1
+
+    def is_over(self):
+        return self.win()
+
+    def show(self):
+        """
+        Displays board.
         """
         for row in self.board:
             print(row)
         print()
 
-    def cut(self, field: list[int]):
-        """
-        Cuts the board basing on field coordinates
+    def scoring(self):
+        return 100 if self.win() else 0
 
-        :param field: list of integers representing coordinates of the field to cut
-        :return: integer representing actual player
-        """
-        try:
-            selected_field = self.board[field[1]-1][field[0]-1]
-
-            # check if selected field is not already cut out
-            if selected_field == 0:
-                pass
-            else:
-                self.board[field[1]-1][field[0]-1] = 0
-
-                # cuts (changes 1's to 0's) in appropriate fields
-                for y in range(field[1]-1, len(self.board)):
-                    for x in range(field[0]-1, len(self.board[y])):
-                        self.board[y][x] = 0
-
-                self.display_board()
-
-                # check if player cut death field
-                if field[0] == 1 and field[1] == 1:
-                    print(f'player {2 if self.player == 1 else 1} won')
-                    self.game_over = True
-
-                # change for the next player after cut
-                self.player = 1 if self.player == 2 else 2
-        except IndexError:
-            print(f'Incorrect index provided')
