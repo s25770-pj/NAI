@@ -22,3 +22,22 @@ If there is a 4x4 board and a player chooses the square at position (2, 2), they
 ## Strategy
 - Pay attention to the moves you leave for your opponent.
 - Try to force your opponent into a position where they have to eat the last square.
+
+# Setting Up the Chomp Game in Python
+
+## Prerequisites
+- Ensure that Python is installed on your computer. You can download it from [python.org](https://www.python.org/downloads/).
+
+## Running the Game
+
+1. **Clone the repository**
+   - Clone the repository from github using command: git clone ```https://github.com/s25770-pj/NAI_CHOMP.git```
+
+2. **Open a Terminal**:
+   - Open dictionary in environment that handles python3.
+   - Navigate to the directory where your `main.py` file is located.
+
+4. **Run the Game**:
+   - Use the command `python main.py` to start the game.
+
+Enjoy playing Chomp!
