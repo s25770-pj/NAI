@@ -1,4 +1,5 @@
-from easyAI import TwoPlayerGame, Negamax, Human_Player, AI_Player
+from easyAI import TwoPlayerGame
+
 
 class Chomp(TwoPlayerGame):
     def __init__(self, players=None):
@@ -6,18 +7,19 @@ class Chomp(TwoPlayerGame):
         Board initialization
         """
         self.players = players
-        self.x = 5
-        self.y = 5
-        self.board = [[1 for _ in range(self.x)] for _ in range(self.y)]
+        self.max_x = 5
+        self.max_y = 5
+        self.board = [[1 for _ in range(self.max_x)] for _ in range(self.max_y)]
         self.current_player = 1
 
     def possible_moves(self):
         moves = []
-        for y in range(self.y):
-            for x in range(self.x):
-                if self.board[y][x] == 1:
+        for y in range(self.max_y):
+            for x in range(self.max_x):
+                if self.board[y][x] == 1 and not (x == 0 and y == 0):
                     moves.append(f"{x + 1}{y + 1}")  # Store as string with 1-based index
-        print(f'moves: {moves}')
+
+        moves.append("11")
         return moves
 
     def make_move(self, move):
@@ -26,16 +28,15 @@ class Chomp(TwoPlayerGame):
         """
         x = int(move[0]) - 1
         y = int(move[1]) - 1
-        print(f'x: {x}, y: {y}')
 
         if self.board[y][x] == 1:  # Check if the field is available
             # Cut the board
-            for i in range(y, self.y):
-                for j in range(x, self.x):
+            for i in range(y, self.max_y):
+                for j in range(x, self.max_x):
                     self.board[i][j] = 0
 
     def win(self):
-        return len(self.possible_moves()) == 1
+        return self.board[0][0] == 0
 
     def is_over(self):
         return self.win()
@@ -50,4 +51,3 @@ class Chomp(TwoPlayerGame):
 
     def scoring(self):
         return 100 if self.win() else 0
-
