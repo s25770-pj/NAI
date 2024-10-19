@@ -1,6 +1,5 @@
 from easyAI import TwoPlayerGame, Player
 
-
 class Chomp(TwoPlayerGame):
     def __init__(self, players: Player = None):
         self.players: list[Player] = players
@@ -67,6 +66,8 @@ class Chomp(TwoPlayerGame):
         for row in self.board:
             print(row)
         print()
+        if self.win():
+            print(f"Player {2 if self.current_player == 1 else 1} wins!")
 
     def scoring(self) -> int:
         """
