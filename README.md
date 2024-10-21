@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# NAI_CHOMP
-Chomp game againt AI 
-=======
 # Authors 
 Jakub Pobłocki 
 Kacper Pecka
@@ -45,4 +41,3 @@ If there is a 4x4 board and a player chooses the square at position (2, 2), they
    - Use the command `python main.py` to start the game.
 
 Enjoy playing Chomp!
->>>>>>> origin/master
