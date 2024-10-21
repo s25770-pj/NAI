@@ -17,7 +17,7 @@ The goal of the game is to force your opponent to eat the last "square" (element
 3. **End of Game**: The game ends when one player cannot make a move, which means they had to eat the last square. That player loses.
 
 ## Example Move
-If there is a 4x4 board and a player chooses the square at position (2, 2), they will eat all squares in columns 2 and 3 and in rows 2 and 3.
+If there is a from 2x2 to 10x10 board and a player chooses the square at position (2, 2), they will eat all squares on the right and down from this block.
 
 ## Strategy
 - Pay attention to the moves you leave for your opponent.
