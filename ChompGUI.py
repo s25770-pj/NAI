@@ -1,56 +1,22 @@
 import tkinter as tk
 from tkinter import messagebox
 from typing import Optional
-
 from easyAI import Negamax, Human_Player, AI_Player
 from models import Chomp
 
 
 class ChompGUI:
-    """
-    A GUI for the Chomp game that allows players to interact with the game board.
-
-    Attributes:
-        game (Chomp): An instance of the Chomp game.
-        window (tk.Tk): The main application window.
-        colors (dict): A dictionary of colors for the game UI.
-        button_style (dict): A dictionary of styles for buttons.
-        label (tk.Label): A label displaying the current player.
-        buttons (list): A 2D list of buttons representing the game board.
-    """
-
-    def __init__(self, game: Chomp) -> None:
-        """
-        Initializes the ChompGUI with the given game.
-
-        Args:
-            game (Chomp): An instance of the Chomp game.
-        """
+    def __init__(self, game: Chomp, window_width: int, window_height: int) -> None:
         self.game = game
         self.window = tk.Tk()
         self.window.title("Chomp Game")
 
-        self.colors: dict[str, str] = {
+        self.colors = {
             "default": "#4CAF50",
             "player1": "#BBEE22",
             "player2": "#22FF00",
         }
 
-        self.button_style: dict[str, str] = {
-            "font": ("Arial", 12),
-            "bg": self.colors["default"],
-            "fg": "white",
-            "activebackground": "#45a049",
-            "padx": 20,
-            "pady": 10,
-            "borderwidth": 2,
-            "relief": "raised",
-            "width": 20,
-            "height": 3
-        }
-
-        window_width = 600
-        window_height = 600
         self.window.geometry(f"{window_width}x{window_height}")
 
         screen_width = self.window.winfo_screenwidth()
@@ -60,21 +26,24 @@ class ChompGUI:
         self.window.geometry(f"+{x}+{y}")
 
         self.label = tk.Label(self.window, text=self.current_player_text(), font=("Arial", 14))
-        self.label.grid(row=0, column=0, columnspan=self.game.max_x, pady=10)
+        self.label.pack(pady=10)
 
-        self.buttons: list[list[tk.Button]] = []
+        self.button_frame = tk.Frame(self.window)  # Frame for buttons
+        self.button_frame.pack(pady=10)
+
+        self.buttons = []
         for y in range(self.game.max_y):
             row_buttons = []
             for x in range(self.game.max_x):
-                button = tk.Button(self.window, text="X",
+                button = tk.Button(self.button_frame, text="X",
                                    command=lambda xy=f"{x + 1}{y + 1}": self.on_button_click(xy),
-                                   **self.button_style)
-                button.grid(row=y + 1, column=x, padx=10, pady=10)
+                                   font=("Arial", 12), bg=self.colors["default"], width=4, height=2)
+                button.grid(row=y, column=x, padx=5, pady=5)
                 row_buttons.append(button)
             self.buttons.append(row_buttons)
 
         for x in range(self.game.max_x):
-            self.window.grid_columnconfigure(x, weight=1)
+            self.button_frame.grid_columnconfigure(x, weight=1)
 
         self.update_buttons()
         self.window.mainloop()
@@ -129,9 +98,7 @@ class ChompGUI:
                 self.show_winner_message()
 
     def ai_move(self) -> None:
-        """
-        Executes the AI player's move and updates the game state accordingly.
-        """
+        """Executes the AI player's move and updates the game state accordingly."""
         ai_move = self.game.players[self.game.current_player - 1].ask_move(self.game)
         self.game.make_move(ai_move)
         self.update_buttons()
@@ -143,9 +110,6 @@ class ChompGUI:
             self.update_buttons()
 
     def show_winner_message(self) -> None:
-        """
-        Displays a message indicating the winner and prompts to play again.
-        """
         winner = f"Player {2 if self.game.current_player == 1 else 1}"
         message = f"{winner} won!\nDo you want to play again?"
         if isinstance(self.game.players[1], AI_Player) and self.game.current_player == 1:
@@ -160,25 +124,16 @@ class ChompGUI:
             self.window.destroy()
 
     def restart_game(self) -> None:
-        """
-        Restarts the game by closing the current window and opening the game mode selection.
-        """
         self.window.destroy()
         choose_game_mode()
 
 
-def choose_game_mode(default_negamax_depth:int =1) -> None:
-    """
-    Creates a new window for the player to choose the game mode.
-
-    Returns:
-        None
-    """
+def choose_game_mode(default_negamax_depth: int = 1) -> None:
     mode_window = tk.Tk()
     mode_window.title("Choose Game Mode")
 
     window_width = 400
-    window_height = 300
+    window_height = 350
     mode_window.geometry(f"{window_width}x{window_height}")
 
     screen_width = mode_window.winfo_screenwidth()
@@ -188,20 +143,55 @@ def choose_game_mode(default_negamax_depth:int =1) -> None:
     mode_window.geometry(f"+{x}+{y}")
 
     def start_game(is_ai: bool, negamax_depth: Optional[int]) -> None:
-        """
-        Starts a new game with the selected mode.
+        try:
+            width = int(x_entry.get())
+            height = int(y_entry.get())
+            if width < 2 or height < 2:
+                raise ValueError("Both dimensions must be at least 2.")
+            if width > 10 or height > 10:
+                raise ValueError("Both dimensions must be at most 10.")
+        except ValueError as e:
+            messagebox.showerror("Invalid Size", str(e))
+            return
 
-        Args:
-            is_ai (bool): Indicates whether to play against AI.
-            negamax_depth (Optional[int]): The depth parameter for the Negamax algorithm, or None if playing against another player.
-        """
         mode_window.destroy()
-        ai = Negamax(negamax_depth) if is_ai else None
-        players = [Human_Player(), AI_Player(ai)] if is_ai else [Human_Player(), Human_Player()]
-        game = Chomp(players)
-        ChompGUI(game)
+        players = [Human_Player(), AI_Player(Negamax(negamax_depth))] if is_ai else [Human_Player(), Human_Player()]
+        game = Chomp(players, width, height)
 
-    tk.Label(mode_window, text="Choose Game Mode:", font=("Arial", 16)).pack(pady=20)
+        button_width = 10
+        button_height = 11
+        button_padding_x = 5
+        button_padding_y = 4
+
+
+        label_height = 130  if height < 3 else 120
+        label_width = 60 if width > 3 else 120
+        if height >= 4:
+            button_height = 12
+        if height >= 5:
+            button_height+=1
+        if height >= 8:
+            button_height += 1
+        # Obliczenia
+        window_width = button_width * width * button_padding_x + label_width
+        window_height = button_height * height * button_padding_y + label_height
+
+        print(f"{window_width}, {window_height}")
+        ChompGUI(game, window_width, window_height)
+
+    tk.Label(mode_window, text="Chomp game", font=("Arial", 24)).pack(pady=10)
+    tk.Label(mode_window, text="Enter map size (width X height):", font=("Arial", 12)).pack(pady=10)
+
+    size_frame = tk.Frame(mode_window)
+    size_frame.pack(pady=10)
+
+    x_entry = tk.Entry(size_frame, font=("Arial", 12), width=5)
+    x_entry.pack(side=tk.LEFT, padx=(0, 5))
+
+    tk.Label(size_frame, text="X", font=("Arial", 12)).pack(side=tk.LEFT, padx=(0, 5))
+
+    y_entry = tk.Entry(size_frame, font=("Arial", 12), width=5)
+    y_entry.pack(side=tk.LEFT)
 
     button_style: dict[str, str] = {
         "font": ("Arial", 12),
@@ -215,8 +205,11 @@ def choose_game_mode(default_negamax_depth:int =1) -> None:
         "width": 20
     }
 
-    tk.Button(mode_window, text="Play with AI", command=lambda: start_game(True,default_negamax_depth), **button_style).pack(pady=10)
-    tk.Button(mode_window, text="Play with another player", command=lambda: start_game(False,1), **button_style).pack(pady=10)
+    tk.Label(mode_window, text="Choose mode:", font=("Arial", 12)).pack(pady=10)
+    tk.Button(mode_window, text="Play with AI", command=lambda: start_game(True, default_negamax_depth),
+              **button_style).pack(pady=10)
+    tk.Button(mode_window, text="Play with another player", command=lambda: start_game(False, 1), **button_style).pack(
+        pady=10)
 
     mode_window.mainloop()
 

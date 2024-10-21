@@ -1,10 +1,10 @@
 from easyAI import TwoPlayerGame, Player
 
 class Chomp(TwoPlayerGame):
-    def __init__(self, players: Player = None):
+    def __init__(self,players: list[Player] = None, max_x: int = 5, max_y: int = 5):
         self.players: list[Player] = players
-        self.max_x: int = 5
-        self.max_y: int = 5
+        self.max_x: int = max_x
+        self.max_y: int = max_y
         self.board: list[list[int]] = [[1 for _ in range(self.max_x)] for _ in range(self.max_y)]
         self.current_player: int = 1
 
