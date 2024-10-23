@@ -2,18 +2,18 @@ import tkinter as tk
 from tkinter import messagebox
 from typing import Optional
 from easyAI import Negamax, Human_Player, AI_Player
-from models import Chomp
+from Chomp import Chomp
 
 MIN_SIZE = 2
-MAX_SIZE = 10
+MAX_SIZE = 5
 DEFAULT_COLOR = "#4CAF50"
 PLAYER1_COLOR = "#BBEE22"
 PLAYER2_COLOR = "#22FF00"
 
 styles = {
-    "default":{
-      "font":("Arial",12),
-      "width": 5
+    "default": {
+        "font": ("Arial", 12),
+        "width": 5
     },
     "button": {
         "font": ("Arial", 12),
@@ -46,6 +46,8 @@ class ChompGUI:
         window_width (int): Width of the window.
         window_height (int): Height of the window.
         """
+        self.button_frame = None
+        self.label = None
         self.game = game
         self.window = tk.Tk()
         self.window.title("Chomp Game")
@@ -210,7 +212,7 @@ class ChompGUI:
         self.window.destroy()
         choose_game_mode()
 
-def choose_game_mode(default_negamax_depth: int = 1) -> None:
+def choose_game_mode(default_negamax_depth: int = 15) -> None:
     """
     Displays the game mode selection window.
 
@@ -245,7 +247,7 @@ def choose_game_mode(default_negamax_depth: int = 1) -> None:
             if width < MIN_SIZE or height < MIN_SIZE:
                 raise ValueError("Both dimensions must be at least 2.")
             if width > MAX_SIZE or height > MAX_SIZE:
-                raise ValueError("Both dimensions must be at most 10.")
+                raise ValueError("Both dimensions must be at most 5.")
         except ValueError as e:
             messagebox.showerror("Invalid Size", str(e))
             return
@@ -276,18 +278,18 @@ def choose_game_mode(default_negamax_depth: int = 1) -> None:
     title_label = tk.Label(mode_window, text="Chomp Game", **styles["title_label"])
     title_label.pack(pady=20)
 
-    size_label = tk.Label(mode_window, text="Enter map size \n\n(width X height, min 2x2, max 10x10):", **styles["label"])
+    size_label = tk.Label(mode_window, text=f"Enter map size \n\n(width X height, min 2x2, max {MAX_SIZE}x{MAX_SIZE}):", **styles["label"])
     size_label.pack(pady=10)
 
     size_frame = tk.Frame(mode_window, bg="#e8f5e9")
     size_frame.pack(pady=10)
 
-    x_entry = tk.Entry(size_frame,**styles["default"])
+    x_entry = tk.Entry(size_frame, **styles["default"])
     x_entry.pack(side=tk.LEFT, padx=(0, 5))
 
     tk.Label(size_frame, text="X", font=("Arial", 12), bg="#e8f5e9").pack(side=tk.LEFT, padx=(0, 5))
 
-    y_entry = tk.Entry(size_frame,**styles["default"])
+    y_entry = tk.Entry(size_frame, **styles["default"])
     y_entry.pack(side=tk.LEFT)
 
     ai_button = tk.Button(mode_window, text="Play with AI", command=lambda: start_game(True, default_negamax_depth), **styles["button"])
@@ -299,4 +301,4 @@ def choose_game_mode(default_negamax_depth: int = 1) -> None:
     mode_window.mainloop()
 
 if __name__ == '__main__':
-    choose_game_mode()
+    choose_game_mode(15)
