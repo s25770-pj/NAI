@@ -1,6 +1,8 @@
 # Authors 
-Jakub Pobłocki  
-Kacper Pecka
+Jakub Pobłocki |  Kacper Pecka
+# Chomp Game
+
+Chomp is a two-player game played on a rectangular grid of squares, where players take turns eating squares. The objective is to force your opponent to eat the last square, leading to their loss. This project implements the Chomp game using Python and the EasyAI library for AI opponents.
 
 # Rules of Chomp
 
@@ -26,8 +28,13 @@ Below are examples of gameplay in Chomp, showing consecutive moves.
 | Move 1 | Move 2 | Move 3 | Move 4 | Move 5 |
 |--------|--------|--------|--------|--------|
 | ![Play 1](image/play_1.png) | ![Play 2](image/play_2.png) | ![Play 3](image/play_3.png) | ![Play 4](image/play_3_1.png) | ![Play 5](image/play_4.png) |
+| *This is what the board looks like at the start; the human player always goes first.* | *The player makes a move by choosing (2,2).* | *AI responds with a move (5,1).* | *The player makes a strategic move (5,2).* | *AI makes a move (5,3).* |
+
 | Move 6 | Move 7 | Move 8 | Move 9 | Move 10 |
-| ![Play 6](image/play_5.png) | ![Play 7](image/play_6.png) | ![Play 8](image/play_7.png) | ![Play 9](image/play_8.png) | ![Play 9](image/play_9.png) |
+|--------|--------|--------|--------|--------|
+| ![Play 6](image/play_5.png) | ![Play 7](image/play_6.png) | ![Play 8](image/play_7.png) | ![Play 9](image/play_8.png) | ![Play 10](image/play_9.png) |
+| *The player makes a move (1,3).* | *AI responds with a move (3,1).* | *The player plays (2,1).* | *AI makes a move (2,2).* | *The player moves to (1,1), resulting in a loss.* |
+
 
 ## Strategy
 - Pay attention to the moves you leave for your opponent.
@@ -49,3 +56,16 @@ You can install the required libraries using the command:
 ```bash
 pip install easyAI
 ```
+
+## Cloning the Repository
+To get started with the Chomp game, you need to clone the repository. Use the following command in your terminal:
+```git clone https://github.com/s25770-pj/NAI_CHOMP.git```
+
+### Running the Game
+1. **Open a Terminal**:
+   - Navigate to the directory where you cloned the repository.
+
+2. **Run the Game**:
+   - Use the command `python main.py` to start the game.
+
+Enjoy playing Chomp!
