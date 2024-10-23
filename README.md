@@ -27,14 +27,12 @@ Below are examples of gameplay in Chomp, showing consecutive moves.
 
 | Move 1 | Move 2 | Move 3 | Move 4 | Move 5 |
 |--------|--------|--------|--------|--------|
-| ![Play 1](image/play_1.png) | ![Play 2](image/play_2.png) | ![Play 3](image/play_3.png) | ![Play 4](image/play_3_1.png) | ![Play 5](image/play_4.png) |
+| <img src="image/play_1.png" alt="Play 1" width="150" height="150" center/> | <img src="image/play_2.png" alt="Play 2" width="150" height="150"/> | <img src="image/play_3.png" alt="Play 3" width="150" height="150"/> | <img src="image/play_3_1.png" alt="Play 4" width="150" height="150"/> | <img src="image/play_4.png" alt="Play 5" width="150" height="150"/> |
 | *This is what the board looks like at the start; the human player always goes first.* | *The player makes a move by choosing (2,2).* | *AI responds with a move (5,1).* | *The player makes a strategic move (5,2).* | *AI makes a move (5,3).* |
 
 | Move 6 | Move 7 | Move 8 | Move 9 | Move 10 |
 |--------|--------|--------|--------|--------|
-| ![Play 6](image/play_5.png) | ![Play 7](image/play_6.png) | ![Play 8](image/play_7.png) | ![Play 9](image/play_8.png) | ![Play 10](image/play_9.png) |
-| *The player makes a move (1,3).* | *AI responds with a move (3,1).* | *The player plays (2,1).* | *AI makes a move (2,2).* | *The player moves to (1,1), resulting in a loss.* |
-
+| <img src="image/play_5.png" alt="Play 6" width="150" height="150"/> | <img src="image/play_6.png" alt="Play 7" width="150" height="150"/> | <img src="image/play_7.png" alt="Play 8" width="150" height="150"/> | <img src="image/play_8.png" alt="Play 9" width="150" height="150"/> | <img src="image/play_9.png" alt="Play 10" width="150" height="150"/> |
 
 ## Strategy
 - Pay attention to the moves you leave for your opponent.
