@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from typing import Optional
 from easyAI import Negamax, Human_Player, AI_Player
-from Chomp import Chomp
+from chomp_game.Chomp import Chomp
 
 MIN_SIZE = 2
 MAX_SIZE = 5
@@ -245,9 +245,9 @@ def choose_game_mode(default_negamax_depth: int = 15) -> None:
             width = int(x_entry.get())
             height = int(y_entry.get())
             if width < MIN_SIZE or height < MIN_SIZE:
-                raise ValueError("Both dimensions must be at least 2.")
+                raise ValueError(f"Both dimensions must be at least {MIN_SIZE}.")
             if width > MAX_SIZE or height > MAX_SIZE:
-                raise ValueError("Both dimensions must be at most 5.")
+                raise ValueError(f"Both dimensions must be at most {MAX_SIZE}.")
         except ValueError as e:
             messagebox.showerror("Invalid Size", str(e))
             return

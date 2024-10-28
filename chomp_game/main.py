@@ -3,7 +3,7 @@
 #All necessary information is available at:
 #https://github.com/s25770-pj/NAI_CHOMP/blob/main/README.md
 
-from Chomp_GUI import choose_game_mode
+from chomp_game.Chomp_GUI import choose_game_mode
 
 if __name__ == '__main__':
     choose_game_mode(15)
