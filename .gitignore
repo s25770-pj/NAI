@@ -10,3 +10,6 @@ node_modules/
 
 # Ignore JetBrains IDE configuration files
 ../.idea/
+
+# Virtual Environment
+.venv

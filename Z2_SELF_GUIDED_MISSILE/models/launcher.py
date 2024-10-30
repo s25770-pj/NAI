@@ -1,6 +1,6 @@
 from pydantic import BaseModel, conint, field_validator, Field
 from uuid import UUID, uuid4
-from missile import Missile
+from Z2_SELF_GUIDED_MISSILE.models.missile import Missile
 from typing import List
 import asyncio
 import pygame
@@ -19,6 +19,14 @@ class Launcher(BaseModel):
         :return:
         """
         return self.default_reload_time
+
+    @property
+    def loaded_missiles(self) -> List[Missile]:
+        return [missile for missile in self.missiles if not missile.is_launched]
+
+    @property
+    def launched_missiles(self) -> List[Missile]:
+        return [missile for missile in self.missiles if missile.is_launched]
 
     def display_missiles(self):
         """
@@ -55,5 +63,5 @@ class Launcher(BaseModel):
     @classmethod
     def validate_missile_count(cls, missiles, values):
         if missiles and len(missiles) > values.data['missiles_limit']:
-            raise ValueError("Cannot have more than 10 missiles.")
+            raise ValueError(f"Cannot have more than {values.data['missiles_limit']} missiles.")
         return missiles

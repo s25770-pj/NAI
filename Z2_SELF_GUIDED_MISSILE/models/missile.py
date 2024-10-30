@@ -17,14 +17,37 @@ class Missile(BaseModel):
     def speed(self):
         return -self.max_speed
 
+    def is_out_of_map(self, screen_height, screen_width):
+        """
+        Checks if object is out of the map
+        :param screen_height:
+        :param screen_width:
+        :return: bool
+        """
+        return (self.y < 0) or (self.y > screen_height) or (self.x < 0) or (self.x > screen_width)
+
     def launch(self):
+        """
+        Sets a missile as launched
+        :return:
+        """
         self.is_launched = True
 
     def move(self):
+        """
+        makes missile move
+        :return:
+        """
         if self.is_launched:
             self.y += self.speed
 
     def draw(self, screen, color):
+        """
+        Draws a missile
+        :param screen:
+        :param color:
+        :return:
+        """
         pygame.draw.circle(screen, color, (self.x, int(self.y)), self.radius)
 
     def __repr__(self):
