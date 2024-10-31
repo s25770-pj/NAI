@@ -13,16 +13,10 @@ Przygotowanie środowiska:
 """
 
 import pygame
-import asyncio
-
-import numpy as np
-import skfuzzy as fuzz
-from skfuzzy import control as ctrl
 
 from models.launcher import Launcher
-from models.missile import Missile
-from map.terrain import generate_terrain, draw_terrain
-from styles.variables.colors import WHITE
+from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.missile_choice import test_missile_choice
+from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.shot_decision import test_do_shot
 
 
 # Pygame settings
@@ -40,125 +34,52 @@ launcher = Launcher(missiles_limit=5, default_reload_time=1)
 bullet_image = pygame.image.load('bullet.svg')
 bullet_image = pygame.transform.scale(bullet_image, (20, 20))
 
-# # Fuzzy inputs
-# temperature = ctrl.Antecedent(np.arange(0, 101, 1), 'temperature')
-# motion = ctrl.Antecedent(np.arange(0, 2, 1), 'motion')
-distance = ctrl.Antecedent(np.arange(0, 10001, 1), 'distance')
-speed = ctrl.Antecedent(np.arange(0, 1501, 1), 'speed')
+print('=======DO SHOT========')
+# Test Case 1: Low Threat, No Motion
+result1 = test_do_shot(speed_input=100, temperature_input=20, motion_input=0, altitude_input=500, distance_input=3000, threat_level_input=10)
+print(f"Test Case 1: Fire Missile Decision = {result1}")
 
-# Fuzzy outputs
-fire_missile = ctrl.Consequent(np.arange(0, 6, 1), 'fire_missile')
+# Test Case 2: Medium Threat, Slow Motion
+result2 = test_do_shot(speed_input=300, temperature_input=45, motion_input=1, altitude_input=800, distance_input=5000, threat_level_input=50)
+print(f"Test Case 2: Fire Missile Decision = {result2}")
 
-# # Membership function definition
-# temperature['low'] = fuzz.trimf(temperature.universe, [0, 0, 50])
-# temperature['medium'] = fuzz.trimf(temperature.universe, [50, 75, 100])
-# temperature['high'] = fuzz.trimf(temperature.universe, [75, 100, 100])
+# Test Case 3: High Threat, Fast Motion, High Altitude
+result3 = test_do_shot(speed_input=600, temperature_input=90, motion_input=1, altitude_input=10000, distance_input=14999, threat_level_input=80)
+print(f"Test Case 3: Fire Missile Decision = {result3}")
+
+# Test Case 4: Low Threat, Fast Motion, Medium Altitude
+# result4 = test_do_shot(speed_input=1200, temperature_input=70, motion_input=1, altitude_input=4000, distance_input=20000, threat_level_input=20)
+# print(f"Test Case 4: Fire Missile Decision = {result4}")
+
+# Test Case 5: High Threat, Medium Speed, Close Distance
+result5 = test_do_shot(speed_input=800, temperature_input=60, motion_input=1, altitude_input=3000, distance_input=4000, threat_level_input=90)
+print(f"Test Case 5: Fire Missile Decision = {result5}")
+
+# Test Case 6: No Motion, Medium Threat
+# result6 = test_do_shot(speed_input=200, temperature_input=50, motion_input=0, altitude_input=600, distance_input=10000, threat_level_input=30)
+# print(f"Test Case 6: Fire Missile Decision = {result6}")
+
+# Test Case 7: Fast Motion, Low Altitude, High Threat
+result7 = test_do_shot(speed_input=1200, temperature_input=85, motion_input=1, altitude_input=1000, distance_input=2000, threat_level_input=95)
+print(f"Test Case 7: Fire Missile Decision = {result7}")
+
+# print('=======LONG RANGE========')
+# test_missile_choice(2500, 600)
+# test_missile_choice(2400, 600)
+# test_missile_choice(2300, 600)
+# test_missile_choice(2200, 600)
 #
-# motion['no'] = fuzz.trimf(motion.universe, [0, 0, 1])
-# motion['yes'] = fuzz.trimf(motion.universe, [0, 1, 1])
-
-distance['close'] = fuzz.trimf(distance.universe, [0, 0, 1500])
-distance['medium'] = fuzz.trimf(distance.universe, [1000, 2000, 3000])
-distance['far'] = fuzz.trimf(distance.universe, [2000, 3000, 3000])
-distance['out_of_range'] = fuzz.trimf(distance.universe, [3000, 7000, 10000])
-
-fire_missile['no'] = fuzz.trimf(fire_missile.universe, [0, 0, 1])
-fire_missile['short'] = fuzz.trimf(fire_missile.universe, [1, 1, 2])
-fire_missile['medium'] = fuzz.trimf(fire_missile.universe, [1.5, 2, 2.5])
-fire_missile['long'] = fuzz.trimf(fire_missile.universe, [2, 3, 4])
-
-speed['slow'] = fuzz.trimf(speed.universe, [0, 0, 500])
-speed['medium'] = fuzz.trimf(speed.universe, [250, 500, 750])
-speed['fast'] = fuzz.trimf(speed.universe, [500, 1500, 1500])
-
-# Fuzzy rules
-rule0 = ctrl.Rule(distance['out_of_range'], fire_missile['no'])
-rule1 = ctrl.Rule(distance['close'] & speed['slow'], fire_missile['short'])
-rule2 = ctrl.Rule(distance['close'] & speed['medium'], fire_missile['short'])
-rule3 = ctrl.Rule(distance['close'] & speed['fast'], fire_missile['short'])
-
-rule4 = ctrl.Rule(distance['medium'] & speed['slow'], fire_missile['medium'])
-rule5 = ctrl.Rule(distance['medium'] & speed['medium'], fire_missile['medium'])
-rule6 = ctrl.Rule(distance['medium'] & speed['fast'], fire_missile['medium'])
-
-rule7 = ctrl.Rule(distance['far'] & speed['slow'], fire_missile['long'])
-rule8 = ctrl.Rule(distance['far'] & speed['medium'], fire_missile['long'])
-rule9 = ctrl.Rule(distance['far'] & speed['fast'], fire_missile['long'])
-
-# Control system
-fire_missile_ctrl = ctrl.ControlSystem([rule0, rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9])
-# print(f'fire_missile_ctrl: {fire_missile_ctrl}')
-fire_missile_sim = ctrl.ControlSystemSimulation(fire_missile_ctrl)
-# print(f'fire_missile_sim: {fire_missile_sim}')
-
-
-def test(distance_input, speed_input, temperature_input=None, motion_input=None):
-    # Wprowadzenie danych do logiki rozmytej
-    fire_missile_sim.input['distance'] = distance_input
-    fire_missile_sim.input['speed'] = speed_input
-    # Print input values
-    # print(f"Inputs - Temperature: {temperature_input}, Motion: {motion_input}, Distance: {distance_input}")
-    # print(f"Distance - Speed: {speed['slow'].mf[speed_input]}, Medium: {speed['medium'].mf[speed_input]}, Far: {speed['fast'].mf[speed_input]}")
-    # Check membership values
-    # print(f"Distance - Close: {distance['close'].mf[distance_input]}, Medium: {distance['medium'].mf[distance_input]}, Far: {distance['far'].mf[distance_input]}")
-
-    # Compute output
-    fire_missile_sim.compute()
-
-    # Print the output
-    print(fire_missile_sim.output)  # Check if there's any output
-    missile_type = fire_missile_sim.output['fire_missile']
-    # print(f'missile_type: {missile_type}')
-    # print(f'missile_type round: {round(missile_type)}')
-
-    # Sprawdzanie, czy należy strzelać
-    if missile_type > 0 and len(launcher.loaded_missiles) > 0:
-        if missile_type < 1:
-            print("Strzel krótki pocisk!")
-            launcher.loaded_missiles[0].launch()
-        elif missile_type < 2:
-            print("Strzel średni pocisk!")
-            launcher.loaded_missiles[0].launch()
-        elif missile_type < 3:
-            print("Strzel długi pocisk!")
-            launcher.loaded_missiles[0].launch()
-
-print('=======LONG RANGE========')
-test(3000, 600)
-test(2900, 600)
-test(2800, 600)
-test(2700, 600)
-test(2600, 600)
-test(2500, 600)
-test(2400, 600)
-test(2300, 600)
-test(2200, 600)
-test(2100, 600)
-test(2000, 600)
-
-print('=======MEDIUM RANGE=======')
-test(1900, 600)
-test(1800, 600)
-test(1700, 600)
-test(1600, 600)
-test(1500, 600)
-test(1400, 600)
-test(1300, 600)
-test(1200, 600)
-test(1100, 600)
-test(1000, 600)
-
-print('=======CLOSE RANGE========')
-test(900, 600)
-test(800, 600)
-test(700, 600)
-test(600, 600)
-test(500, 600)
-test(400, 600)
-test(300, 600)
-test(200, 600)
-test(100, 600)
-test(0, 600)
+# print('=======MEDIUM RANGE=======')
+# test_missile_choice(2100, 600)
+# test_missile_choice(2000, 600)
+# test_missile_choice(1600, 600)
+# test_missile_choice(1500, 600)
+#
+# print('=======CLOSE RANGE========')
+# test_missile_choice(1400, 600)
+# test_missile_choice(1300, 600)
+# test_missile_choice(100, 600)
+# test_missile_choice(0, 600)
 
 # Tasks
 # async def reload_missile_task(missile):
