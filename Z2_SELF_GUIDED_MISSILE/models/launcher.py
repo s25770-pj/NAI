@@ -1,9 +1,11 @@
 from pydantic import BaseModel, conint, field_validator, Field
 from uuid import UUID, uuid4
 from Z2_SELF_GUIDED_MISSILE.models.missile import Missile
-from typing import List
+from typing import List, Any
 import asyncio
 import pygame
+
+from Z2_SELF_GUIDED_MISSILE.models.ufo import UFO
 
 
 class Launcher(BaseModel):
@@ -45,6 +47,22 @@ class Launcher(BaseModel):
         if len(self.missiles) >= self.missiles_limit:
             raise ValueError(f"Cannot add more missiles. Limit is {self.missiles_limit}.")
         self.missiles.append(missile)
+
+    def scan(self) -> List[List[float | complex | Any]]:
+        """
+        Search objects in range on the field
+        :return: Lists of pairs of UFO objects and distances from launcher
+        """
+        # TODO: zrobić rozróżnienie na przyjazne i nieprzyjazne - poza tematyką zadania
+        UFOs = UFO.get_deployed()
+        list_of_ufo = []
+
+        for ufo in UFOs:
+            distance = ((ufo.x-self.x)**2+(ufo.y-self.y)**2)**(1/2)
+
+            if distance <= max(self.missiles, key=lambda m: m.radius).radius:
+                list_of_ufo.append([ufo, distance])
+        return list_of_ufo
 
     async def reload_missile(self, missile: Missile):
         """

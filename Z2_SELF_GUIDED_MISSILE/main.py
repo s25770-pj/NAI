@@ -12,13 +12,18 @@ Przygotowanie środowiska:
    pip install numpy scikit-fuzzy
 """
 import asyncio
+import json
+
 import pygame
 
-from Z2_SELF_GUIDED_MISSILE.map.terrain import generate_terrain, draw_terrain
+from Z2_SELF_GUIDED_MISSILE.map.terrain import draw_terrain
 from Z2_SELF_GUIDED_MISSILE.models.missile import Missile
-from Z2_SELF_GUIDED_MISSILE.styles.variables.colors import WHITE
 from models.launcher import Launcher
 from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.shot_decision import threat_level
+
+
+with open('./config.json', 'r') as file:
+    config = json.load(file)
 
 # Pygame settings
 pygame.init()
@@ -59,32 +64,6 @@ bullet_image = pygame.transform.scale(bullet_image, (20, 20))
 #                           f' distance: {distance*2500},'
 #                           f' threat_level.json: {threat_level.json*20}')
 
-
-#
-# # Test Case 2: Medium Threat, Slow Motion
-# result2 = test_do_shot(speed_input=300, temperature_input=45, motion_input=1, altitude_input=800, distance_input=5000, threat_level_input=50)
-# print(f"Test Case 2: Fire Missile Decision = {result2}")
-#
-# # Test Case 3: High Threat, Fast Motion, High Altitude
-# result3 = test_do_shot(speed_input=600, temperature_input=90, motion_input=1, altitude_input=10000, distance_input=14999, threat_level_input=80)
-# print(f"Test Case 3: Fire Missile Decision = {result3}")
-#
-# # Test Case 4: Low Threat, Fast Motion, Medium Altitude
-# result4 = test_do_shot(speed_input=1200, temperature_input=70, motion_input=1, altitude_input=4000, distance_input=20000, threat_level_input=20)
-# print(f"Test Case 4: Fire Missile Decision = {result4}")
-#
-# # Test Case 5: High Threat, Medium Speed, Close Distance
-# result5 = test_do_shot(speed_input=800, temperature_input=60, motion_input=1, altitude_input=3000, distance_input=4000, threat_level_input=90)
-# print(f"Test Case 5: Fire Missile Decision = {result5}")
-#
-# # Test Case 6: No Motion, Medium Threat
-# result6 = test_do_shot(speed_input=200, temperature_input=50, motion_input=0, altitude_input=600, distance_input=10000, threat_level_input=30)
-# print(f"Test Case 6: Fire Missile Decision = {result6}")
-#
-# # Test Case 7: Fast Motion, Low Altitude, High Threat
-# result7 = test_do_shot(speed_input=1200, temperature_input=85, motion_input=1, altitude_input=1000, distance_input=2000, threat_level_input=95)
-# print(f"Test Case 7: Fire Missile Decision = {result7}")
-
 # Tasks
 async def reload_missile_task(missile):
     # print(f"Starting reload for missile {missile}")
@@ -103,7 +82,7 @@ async def main_loop():
     clock = pygame.time.Clock()
 
     # Generate initial terrain
-    terrain_points = generate_terrain(screen_width)
+    # terrain_points = generate_terrain(screen_width)
 
     running = True
     while running:
@@ -115,12 +94,19 @@ async def main_loop():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     try:
-                        missile = Missile(strength=100, radius=5, max_speed=5, acceleration=1, x=screen_width // 2, y=screen_height - 50)
+                        # TODO: x i y pojawiania się pocisku do zmiany na x i y wyrzutni
+                        missile = Missile(
+                            strength=config['MISSILE']['TYPES']['MID_RANGE']['STRENGTH'],
+                            radius=config['MISSILE']['TYPES']['MID_RANGE']['RADIUS'],
+                            max_speed=config['MISSILE']['TYPES']['MID_RANGE']['MAX_SPEED'],
+                            acceleration=config['MISSILE']['TYPES']['MID_RANGE']['ACCELERATION'],
+                            x=screen_width // 2,
+                            y=screen_height - 50)
                         asyncio.create_task(reload_missile_task(missile))
                     except ValueError as e:
                         print('Error', e)
 
-        draw_terrain(terrain_points, screen, screen_width, screen_height)
+        draw_terrain(screen, screen_width, screen_height)
 
         # Updating
         for missile in launcher.missiles[:]:
@@ -132,9 +118,9 @@ async def main_loop():
         for index, _ in enumerate(launcher.loaded_missiles):
             screen.blit(bullet_image, (25*index, 0))
 
-        launcher.draw(screen, WHITE, screen_width, screen_height)
+        launcher.draw(screen, config['LAUNCHER']['COLOR'], screen_width, screen_height)
         for missile in launcher.launched_missiles:
-            missile.draw(screen, WHITE)
+            missile.draw(screen, config['MISSILE']['COLOR'])
 
         pygame.display.flip()
         await asyncio.sleep(0.01)
