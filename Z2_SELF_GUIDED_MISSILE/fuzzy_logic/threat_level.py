@@ -1,57 +1,65 @@
-from skfuzzy import control as ctrl
+import json
 import numpy as np
 import skfuzzy as fuzz
 
+from skfuzzy import control as ctrl
+
+
 # Antecedents
-distance = ctrl.Antecedent(np.arange(0, 100001, 1), 'distance')
-distance['close'] = fuzz.trimf(distance.universe, [0, 0, 5000])
-distance['medium'] = fuzz.trimf(distance.universe, [5000, 20000, 50000])
-distance['far'] = fuzz.trimf(distance.universe, [20000, 100000, 100000])
-
-speed = ctrl.Antecedent(np.arange(0, 1501, 1), 'speed')
-speed['slow'] = fuzz.trimf(speed.universe, [0, 0, 500])
-speed['medium'] = fuzz.trimf(speed.universe, [250, 500, 750])
-speed['fast'] = fuzz.trimf(speed.universe, [500, 1500, 1500])
-
-altitude = ctrl.Antecedent(np.arange(0, 20001, 1), 'altitude')
-altitude['low'] = fuzz.trimf(altitude.universe, [0, 0, 1000])
-altitude['medium'] = fuzz.trimf(altitude.universe, [1000, 2500, 5000])
-altitude['high'] = fuzz.trimf(altitude.universe, [4001, 20000, 20000])
+motion = ctrl.Antecedent(np.array([0, 1]), 'motion')  # 0: Stationary, 1: Moving
+motion['stationary'] = fuzz.trimf(motion.universe, [0, 0, 0])
+motion['moving'] = fuzz.trimf(motion.universe, [1, 1, 1])
 
 weapon = ctrl.Antecedent(np.array([0, 1]), 'weapon')  # 0: Unarmed, 1: Armed
 weapon['unarmed'] = fuzz.trimf(weapon.universe, [0, 0, 0])
 weapon['armed'] = fuzz.trimf(weapon.universe, [1, 1, 1])
 
-motion = ctrl.Antecedent(np.array([0, 1]), 'motion')  # 0: Stationary, 1: Moving
-motion['stationary'] = fuzz.trimf(motion.universe, [0, 0, 0])
-motion['moving'] = fuzz.trimf(motion.universe, [1, 1, 1])
+distance = ctrl.Antecedent(np.arange(0, 100001, 1), 'distance')
+distance['close'] = fuzz.trimf(distance.universe, [0, 0, 5000])
+distance['medium'] = fuzz.trimf(distance.universe, [5000, 20000, 50000])
+distance['far'] = fuzz.trimf(distance.universe, [20000, 100000, 100000])
 
-# output
-threat = ctrl.Consequent(np.arange(0, 101, 1), 'threat_level')
-threat['low'] = fuzz.trimf(threat.universe, [0, 0, 50])
-threat['medium'] = fuzz.trimf(threat.universe, [25, 50, 75])
-threat['high'] = fuzz.trimf(threat.universe, [50, 100, 100])
+# Consequent
+threat_level = ctrl.Consequent(np.arange(0, 101, 1), 'threat_level.json')
+threat_level['low'] = fuzz.trimf(threat_level.universe, [0, 0, 50])
+threat_level['medium'] = fuzz.trimf(threat_level.universe, [25, 50, 75])
+threat_level['high'] = fuzz.trimf(threat_level.universe, [50, 100, 100])
 
 # Rules
-threat_rules = [
-    ctrl.Rule(distance['close'] & speed['fast'] & weapon['armed'], threat['high']),
-    ctrl.Rule(distance['medium'] & speed['medium'] & weapon['armed'], threat['medium']),
-    ctrl.Rule(distance['far'] & speed['slow'] & weapon['unarmed'], threat['low']),
-    ctrl.Rule(motion['moving'] & altitude['high'], threat['high']),
-]
+formatted_rules = []
 
-# Control System
-threat_ctrl = ctrl.ControlSystem(threat_rules)
-threat_sim = ctrl.ControlSystemSimulation(threat_ctrl)
+# Get rules from json file
+with open('./fuzzy_logic/rules/threat_level.json', 'r') as file:
+    rules = json.load(file)
 
-# Test Function
-def calculate_threat_test(distance_input, speed_input, altitude_input, weapon_input, motion_input):
-    threat_sim.input['distance'] = distance_input
-    threat_sim.input['speed'] = speed_input
-    threat_sim.input['altitude'] = altitude_input
-    threat_sim.input['weapon'] = weapon_input
-    threat_sim.input['motion'] = motion_input
+    for rule in rules:
+        conditions = rule['conditions']
+        action = rule['action']
 
-    threat_sim.compute()
+        formatted_rules.append(
+            ctrl.Rule(motion[conditions['motion']] &
+                      weapon[conditions['weapon']] &
+                      distance[conditions['distance']], threat_level[action]))
 
-    return threat_sim.output['threat_level']
+
+def calculate_threat_level(motion: float, weapon: float, distance: float) -> float:
+    '''
+    Function that calculates threat level
+    :param motion: does object move
+    :param weapon: does object has weapon
+    :param distance: distance between launcher and the object
+    :return: threat level
+    '''
+    # Simulate threat level
+    threat_level_ctrl = ctrl.ControlSystem(formatted_rules)
+    threat_level_sim = ctrl.ControlSystemSimulation(threat_level_ctrl)
+
+    # Pin inputs to simulation
+    threat_level_sim.input['motion'] = motion
+    threat_level_sim.input['weapon'] = weapon
+    threat_level_sim.input['distance'] = distance
+
+    # Process simulation data
+    threat_level_sim.compute()
+
+    return threat_level_sim.output['threat_level']

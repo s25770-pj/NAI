@@ -1,0 +1,15 @@
+[
+    {"conditions": {"motion": "stationary", "weapon": "unarmed", "distance": "close"}, "action": "medium"},
+    {"conditions": {"motion": "stationary", "weapon": "unarmed", "distance": "medium"}, "action": "medium"},
+    {"conditions": {"motion": "stationary", "weapon": "unarmed", "distance": "far"}, "action": "low"},
+    {"conditions": {"motion": "stationary", "weapon": "armed", "distance": "close"}, "action": "high"},
+    {"conditions": {"motion": "stationary", "weapon": "armed", "distance": "medium"}, "action": "high"},
+    {"conditions": {"motion": "stationary", "weapon": "armed", "distance": "far"}, "action": "medium"},
+
+    {"conditions": {"motion": "moving", "weapon": "unarmed", "distance": "close"}, "action": "high"},
+    {"conditions": {"motion": "moving", "weapon": "unarmed", "distance": "medium"}, "action": "medium"},
+    {"conditions": {"motion": "moving", "weapon": "unarmed", "distance": "far"}, "action": "medium"},
+    {"conditions": {"motion": "moving", "weapon": "armed", "distance": "close"}, "action": "high"},
+    {"conditions": {"motion": "moving", "weapon": "armed", "distance": "medium"}, "action": "high"},
+    {"conditions": {"motion": "moving", "weapon": "armed", "distance": "far"}, "action": "medium"}
+]

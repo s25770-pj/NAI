@@ -1,0 +1,31 @@
+[
+    {"conditions": {"threat_level": "low", "speed": "slow", "altitude": "low"}, "action": "no"},
+    {"conditions": {"threat_level": "low", "speed": "slow", "altitude": "medium"}, "action": "no"},
+    {"conditions": {"threat_level": "low", "speed": "slow", "altitude": "high"}, "action": "no"},
+    {"conditions": {"threat_level": "low", "speed": "medium", "altitude": "low"}, "action": "no"},
+    {"conditions": {"threat_level": "low", "speed": "medium", "altitude": "medium"}, "action": "no"},
+    {"conditions": {"threat_level": "low", "speed": "medium", "altitude": "high"}, "action": "no"},
+    {"conditions": {"threat_level": "low", "speed": "fast", "altitude": "low"}, "action": "no"},
+    {"conditions": {"threat_level": "low", "speed": "fast", "altitude": "medium"}, "action": "no"},
+    {"conditions": {"threat_level": "low", "speed": "fast", "altitude": "high"}, "action": "no"},
+
+    {"conditions": {"threat_level": "medium", "speed": "slow", "altitude": "low"}, "action": "yes"},
+    {"conditions": {"threat_level": "medium", "speed": "slow", "altitude": "medium"}, "action": "yes"},
+    {"conditions": {"threat_level": "medium", "speed": "slow", "altitude": "high"}, "action": "no"},
+    {"conditions": {"threat_level": "medium", "speed": "medium", "altitude": "low"}, "action": "yes"},
+    {"conditions": {"threat_level": "medium", "speed": "medium", "altitude": "medium"}, "action": "yes"},
+    {"conditions": {"threat_level": "medium", "speed": "medium", "altitude": "high"}, "action": "no"},
+    {"conditions": {"threat_level": "medium", "speed": "fast", "altitude": "low"}, "action": "yes"},
+    {"conditions": {"threat_level": "medium", "speed": "fast", "altitude": "medium"}, "action": "yes"},
+    {"conditions": {"threat_level": "medium", "speed": "fast", "altitude": "high"}, "action": "no"},
+
+    {"conditions": {"threat_level": "high", "speed": "slow", "altitude": "low"}, "action": "yes"},
+    {"conditions": {"threat_level": "high", "speed": "slow", "altitude": "medium"}, "action": "yes"},
+    {"conditions": {"threat_level": "high", "speed": "slow", "altitude": "high"}, "action": "yes"},
+    {"conditions": {"threat_level": "high", "speed": "medium", "altitude": "low"}, "action": "yes"},
+    {"conditions": {"threat_level": "high", "speed": "medium", "altitude": "medium"}, "action": "yes"},
+    {"conditions": {"threat_level": "high", "speed": "medium", "altitude": "high"}, "action": "yes"},
+    {"conditions": {"threat_level": "high", "speed": "fast", "altitude": "low"}, "action": "yes"},
+    {"conditions": {"threat_level": "high", "speed": "fast", "altitude": "medium"}, "action": "yes"},
+    {"conditions": {"threat_level": "high", "speed": "fast", "altitude": "high"}, "action": "yes"}
+]

@@ -1,0 +1,31 @@
+[
+    {"conditions": {"distance": "close", "speed": "slow", "altitude": "low"}, "action": "short"},
+    {"conditions": {"distance": "close", "speed": "slow", "altitude": "medium"}, "action": "short"},
+    {"conditions": {"distance": "close", "speed": "slow", "altitude": "high"}, "action": "short"},
+    {"conditions": {"distance": "close", "speed": "medium", "altitude": "low"}, "action": "short"},
+    {"conditions": {"distance": "close", "speed": "medium", "altitude": "medium"}, "action": "short"},
+    {"conditions": {"distance": "close", "speed": "medium", "altitude": "high"}, "action": "short"},
+    {"conditions": {"distance": "close", "speed": "fast", "altitude": "low"}, "action": "short"},
+    {"conditions": {"distance": "close", "speed": "fast", "altitude": "medium"}, "action": "medium"},
+    {"conditions": {"distance": "close", "speed": "fast", "altitude": "high"}, "action": "medium"},
+
+    {"conditions": {"distance": "medium", "speed": "slow", "altitude": "low"}, "action": "medium"},
+    {"conditions": {"distance": "medium", "speed": "slow", "altitude": "medium"}, "action": "medium"},
+    {"conditions": {"distance": "medium", "speed": "slow", "altitude": "high"}, "action": "medium"},
+    {"conditions": {"distance": "medium", "speed": "medium", "altitude": "low"}, "action": "medium"},
+    {"conditions": {"distance": "medium", "speed": "medium", "altitude": "medium"}, "action": "medium"},
+    {"conditions": {"distance": "medium", "speed": "medium", "altitude": "high"}, "action": "medium"},
+    {"conditions": {"distance": "medium", "speed": "fast", "altitude": "low"}, "action": "medium"},
+    {"conditions": {"distance": "medium", "speed": "fast", "altitude": "medium"}, "action": "long"},
+    {"conditions": {"distance": "medium", "speed": "fast", "altitude": "high"}, "action": "long"},
+
+    {"conditions": {"distance": "far", "speed": "slow", "altitude": "low"}, "action": "long"},
+    {"conditions": {"distance": "far", "speed": "slow", "altitude": "medium"}, "action": "long"},
+    {"conditions": {"distance": "far", "speed": "slow", "altitude": "high"}, "action": "long"},
+    {"conditions": {"distance": "far", "speed": "medium", "altitude": "low"}, "action": "long"},
+    {"conditions": {"distance": "far", "speed": "medium", "altitude": "medium"}, "action": "long"},
+    {"conditions": {"distance": "far", "speed": "medium", "altitude": "high"}, "action": "long"},
+    {"conditions": {"distance": "far", "speed": "fast", "altitude": "low"}, "action": "long"},
+    {"conditions": {"distance": "far", "speed": "fast", "altitude": "medium"}, "action": "long"},
+    {"conditions": {"distance": "far", "speed": "fast", "altitude": "high"}, "action": "long"}
+]
