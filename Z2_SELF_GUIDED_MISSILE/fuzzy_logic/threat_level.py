@@ -2,8 +2,12 @@ import json
 import numpy as np
 import skfuzzy as fuzz
 
+from math import ceil
 from skfuzzy import control as ctrl
 
+
+with open('./config.json') as file:
+    config = json.load(file)
 
 # Antecedents
 motion = ctrl.Antecedent(np.array([0, 1]), 'motion')  # 0: Stationary, 1: Moving
@@ -20,7 +24,7 @@ distance['medium'] = fuzz.trimf(distance.universe, [5000, 20000, 50000])
 distance['far'] = fuzz.trimf(distance.universe, [20000, 100000, 100000])
 
 # Consequent
-threat_level = ctrl.Consequent(np.arange(0, 101, 1), 'threat_level.json')
+threat_level = ctrl.Consequent(np.arange(0, 101, 1), 'threat_level')
 threat_level['low'] = fuzz.trimf(threat_level.universe, [0, 0, 50])
 threat_level['medium'] = fuzz.trimf(threat_level.universe, [25, 50, 75])
 threat_level['high'] = fuzz.trimf(threat_level.universe, [50, 100, 100])
@@ -29,7 +33,7 @@ threat_level['high'] = fuzz.trimf(threat_level.universe, [50, 100, 100])
 formatted_rules = []
 
 # Get rules from json file
-with open('./fuzzy_logic/rules/threat_level.json', 'r') as file:
+with open(config['RULES']['THREAT']['URL'], 'r') as file:
     rules = json.load(file)
 
     for rule in rules:
@@ -63,3 +67,5 @@ def calculate_threat_level(motion: float, weapon: float, distance: float) -> flo
     threat_level_sim.compute()
 
     return threat_level_sim.output['threat_level']
+
+

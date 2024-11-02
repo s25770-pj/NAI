@@ -5,6 +5,9 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
 
+with open('./config.json', 'r') as file:
+    config = json.load(file)
+
 # Antecedents
 distance = ctrl.Antecedent(np.arange(0, 10001, 1), 'distance')
 distance['close'] = fuzz.trimf(distance.universe, [0, 0, 1500])
@@ -31,7 +34,7 @@ missile_type['long'] = fuzz.trimf(missile_type.universe, [1, 2, 2])
 formatted_rules = []
 
 # Get rules from json file
-with open('./fuzzy_logic/rules/missile_choice.json', 'r') as file:
+with open(config['RULES']['MISSILE_CHOICE']['URL'], 'r') as file:
     rules = json.load(file)
 
     for rule in rules:
@@ -43,14 +46,14 @@ with open('./fuzzy_logic/rules/missile_choice.json', 'r') as file:
                       speed[conditions['speed']] &
                       altitude[conditions['altitude']], missile_type[action]))
 
-def missile_choice(distance_input: float, speed_input: float, altitude_input: float) -> float:
-    '''
+def calculate_required_missile(distance_input: float, speed_input: float, altitude_input: float) -> float:
+    """
     Function that calculates threat level
     :param distance_input: distance between launcher and the object
     :param speed_input: speed of the object
     :param altitude_input: altitude of the object
     :return: missile choice
-    '''
+    """
     # Simulate threat level
     fire_missile_ctrl = ctrl.ControlSystem(formatted_rules)
     fire_missile_sim = ctrl.ControlSystemSimulation(fire_missile_ctrl)

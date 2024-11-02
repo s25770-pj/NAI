@@ -13,12 +13,14 @@
       "OCTAVES": 6
     }
   },
+
   "LAUNCHER": {
     "COLOR": [255, 255, 255],
     "SETUP": {
       "MISSILES_LIMIT": 100
     }
   },
+
   "MISSILE": {
     "COLOR": [255, 255, 255],
     "TYPES": {
@@ -40,6 +42,18 @@
         "MAX_SPEED": 1000,
         "ACCELERATION": 50
       }
+    }
+  },
+
+  "RULES": {
+    "THREAT": {
+      "URL": "./fuzzy_logic/rules/threat_level.json"
+    },
+    "SHOT_DECISION": {
+      "URL": "./fuzzy_logic/rules/do_shot.json"
+    },
+    "MISSILE_CHOICE": {
+      "URL": "./fuzzy_logic/rules/missile_choice.json"
     }
   }
 }

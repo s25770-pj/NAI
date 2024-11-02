@@ -1,10 +1,14 @@
-from pydantic import BaseModel, conint, field_validator, Field
-from uuid import UUID, uuid4
-from Z2_SELF_GUIDED_MISSILE.models.missile import Missile
-from typing import List, Any
 import asyncio
 import pygame
 
+from pydantic import BaseModel, conint, field_validator, Field
+from uuid import UUID, uuid4
+from typing import List, Any
+
+from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.threat_level import calculate_threat_level
+from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.shot_decision import calculate_shot_rightness
+from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.missile_choice import calculate_required_missile
+from Z2_SELF_GUIDED_MISSILE.models.missile import Missile
 from Z2_SELF_GUIDED_MISSILE.models.ufo import UFO
 
 
@@ -13,6 +17,8 @@ class Launcher(BaseModel):
     missiles_limit: conint(ge=0, le=100)
     missiles: List[Missile] = []
     default_reload_time: conint(ge=0)
+    x: conint(ge=0)
+    y: conint(ge=0)
 
     @property
     def reload_time(self) -> conint(ge=0):
@@ -54,15 +60,39 @@ class Launcher(BaseModel):
         :return: Lists of pairs of UFO objects and distances from launcher
         """
         # TODO: zrobić rozróżnienie na przyjazne i nieprzyjazne - poza tematyką zadania
-        UFOs = UFO.get_deployed()
-        list_of_ufo = []
+        UFOs = UFO.all()
+        detected_UFOs = []
 
         for ufo in UFOs:
+            ufo_speed = ufo.speed
+            ufo_altitude = ufo.altitude
+            # TODO: Można zrobić oddzielny model od ostrzeżeń, które będą później wyświetlane
             distance = ((ufo.x-self.x)**2+(ufo.y-self.y)**2)**(1/2)
+            # TODO: Dodać sprawdzanie czy uzbrojony i czy sie rusza
+            threat_level = calculate_threat_level(
+                motion=1,
+                weapon=1,
+                distance=distance*10
+            )
+            # TODO: Można się zastanowić nad dodaniem własnego obliczania prędkości
+            shot_rightness = calculate_shot_rightness(
+                threat_level_input=threat_level,
+                speed_input=ufo_speed,
+                altitude_input=ufo_altitude
+            )
+            required_missile = calculate_required_missile(
+                distance_input=distance,
+                speed_input=ufo_speed,
+                altitude_input=ufo_altitude
+            )
 
-            if distance <= max(self.missiles, key=lambda m: m.radius).radius:
-                list_of_ufo.append([ufo, distance])
-        return list_of_ufo
+            if distance*10 <= max(self.missiles, key=lambda m: m.radius).radius:
+                detected_UFOs.append([ufo, distance*10])
+            print(f'Launcher: {self.uuid} detected UFO, details: {ufo.uuid} |'
+                  f' Decision - threat_level: {round(threat_level, 2)}%,'
+                  f' shot_rightness: {round(shot_rightness, 2)}%,'
+                  f' required_missile: {round(required_missile, 2)},')
+        return detected_UFOs
 
     async def reload_missile(self, missile: Missile):
         """

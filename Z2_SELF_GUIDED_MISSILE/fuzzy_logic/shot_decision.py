@@ -5,6 +5,9 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
 
+with open('./config.json', 'r') as file:
+    config = json.load(file)
+
 # Antecedents
 # TODO: przenieść do sterowania pociskiem
 # temperature = ctrl.Antecedent(np.arange(0, 131, 1), 'temperature')
@@ -12,7 +15,7 @@ from skfuzzy import control as ctrl
 # temperature['medium'] = fuzz.trimf(temperature.universe, [25, 50, 80])
 # temperature['high'] = fuzz.trimf(temperature.universe, [70, 100, 130])/
 
-threat_level = ctrl.Antecedent(np.arange(0, 101, 1), 'threat_level.json')
+threat_level = ctrl.Antecedent(np.arange(0, 101, 1), 'threat_level')
 threat_level['low'] = fuzz.trimf(threat_level.universe, [0, 0, 30])
 threat_level['medium'] = fuzz.trimf(threat_level.universe, [20, 50, 80])
 threat_level['high'] = fuzz.trimf(threat_level.universe, [70, 100, 100])
@@ -37,7 +40,7 @@ formatted_rules = []
 
 # Get rules from json file
 # TODO: Można dorobić funkcję statyczną do tego
-with open('./fuzzy_logic/rules/do_shot.json', 'r') as file:
+with open(config['RULES']['SHOT_DECISION']['URL'], 'r') as file:
     rules = json.load(file)
 
     for rule in rules:
@@ -49,7 +52,7 @@ with open('./fuzzy_logic/rules/do_shot.json', 'r') as file:
                       speed[conditions['speed']] &
                       altitude[conditions['altitude']], do_shot[action]))
 
-def do_shot(threat_level_input: float, speed_input: float, altitude_input: float) -> float:
+def calculate_shot_rightness(threat_level_input: float, speed_input: float, altitude_input: float) -> float:
     '''
     Function that calculates rightness of launching the missile at the moment
     :param threat_level_input: threat level that object exerts
@@ -62,11 +65,11 @@ def do_shot(threat_level_input: float, speed_input: float, altitude_input: float
     do_shot_sim = ctrl.ControlSystemSimulation(do_shot_ctrl)
 
     # Pin inputs to simulation
-    do_shot_sim.input['threat_level'] = threat_level[threat_level_input]
-    do_shot_sim.input['speed'] = speed[speed_input]
-    do_shot_sim.input['altitude'] = altitude[altitude_input]
+    do_shot_sim.input['threat_level'] = threat_level_input
+    do_shot_sim.input['speed'] = speed_input
+    do_shot_sim.input['altitude'] = altitude_input
 
     # Process simulation data
     do_shot_sim.compute()
 
-    return do_shot_sim.output['do_shot']
+    return do_shot_sim.output['fire_missile']

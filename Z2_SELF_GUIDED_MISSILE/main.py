@@ -20,7 +20,7 @@ from Z2_SELF_GUIDED_MISSILE.map.terrain import draw_terrain
 from Z2_SELF_GUIDED_MISSILE.models.missile import Missile
 from models.launcher import Launcher
 from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.shot_decision import threat_level
-
+from Z2_SELF_GUIDED_MISSILE.models.ufo import UFO
 
 with open('./config.json', 'r') as file:
     config = json.load(file)
@@ -33,36 +33,23 @@ pygame.display.set_caption('Launcher and Missiles')
 
 font = pygame.font.Font(None, 36)
 
-# # Launcher initialization
-launcher = Launcher(missiles_limit=5, default_reload_time=1)
+# Launcher initialization
+launcher = Launcher(missiles_limit=5, default_reload_time=1, x=300, y=300)
+missile = Missile(
+    strength=config['MISSILE']['TYPES']['MID_RANGE']['STRENGTH'],
+    radius=config['MISSILE']['TYPES']['MID_RANGE']['RADIUS'],
+    max_speed=config['MISSILE']['TYPES']['MID_RANGE']['MAX_SPEED'],
+    acceleration=config['MISSILE']['TYPES']['MID_RANGE']['ACCELERATION'],
+    x=screen_width // 2,
+    y=screen_height - 50)
+launcher.add_missile(missile)
+
+ufo = UFO(speed=200, max_speed=600, altitude=500, temperature=70, x=350, y=120)
+ufo2 = UFO(speed=250, max_speed=400, altitude=1200, temperature=50, x=50, y=20)
 #
-# # Missile image loading
+# Missile image loading
 bullet_image = pygame.image.load('bullet.svg')
 bullet_image = pygame.transform.scale(bullet_image, (20, 20))
-
-# print('=======DO SHOT========')
-# Test Case 1: Low Threat, No Motion
-# count = 0
-# for motion in range(2):
-#     for altitude in range(11):
-#         for distance in range(10):
-#             for threat_level.json in range(6):
-#                 try:
-#                     result1 = do_shot(
-#                         motion_input=motion,
-#                         altitude_input=altitude*500,
-#                         distance_input=distance*2500,
-#                         threat_level_input=threat_level.json*20
-#                     )
-#                     count += 1
-#                     if count%1000 == 0:
-#                         print(f'{count} records successfully processed.')
-#                 except Exception as e:
-#                     print(f'Error {e} occurred!')
-#                     print(f' motion: {motion},'
-#                           f' altitude: {altitude*500},'
-#                           f' distance: {distance*2500},'
-#                           f' threat_level.json: {threat_level.json*20}')
 
 # Tasks
 async def reload_missile_task(missile):
@@ -116,15 +103,18 @@ async def main_loop():
 
         # Drawing
         for index, _ in enumerate(launcher.loaded_missiles):
-            screen.blit(bullet_image, (25*index, 0))
+            screen.blit(bullet_image, (25 * index, 0))
 
         launcher.draw(screen, config['LAUNCHER']['COLOR'], screen_width, screen_height)
         for missile in launcher.launched_missiles:
             missile.draw(screen, config['MISSILE']['COLOR'])
 
+        launcher.scan()
+
         pygame.display.flip()
         await asyncio.sleep(0.01)
         clock.tick(30)
+
 
 if __name__ == '__main__':
     asyncio.run(main_loop())
