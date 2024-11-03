@@ -25,22 +25,22 @@
     "COLOR": [255, 255, 255],
     "TYPES": {
       "SHORT_RANGE": {
-        "STRENGTH": 500,
-        "RADIUS": 1000,
-        "MAX_SPEED": 1000,
-        "ACCELERATION": 50
+        "strength": 500,
+        "radius": 1000,
+        "max_speed": 1000,
+        "acceleration": 50
       },
       "MEDIUM_RANGE": {
-        "STRENGTH": 500,
-        "RADIUS": 1800,
-        "MAX_SPEED": 1000,
-        "ACCELERATION": 50
+        "strength": 500,
+        "radius": 1800,
+        "max_speed": 1000,
+        "acceleration": 50
       },
       "LONG_RANGE": {
-        "STRENGTH": 500,
-        "RADIUS": 3000,
-        "MAX_SPEED": 1000,
-        "ACCELERATION": 50
+        "strength": 500,
+        "radius": 3000,
+        "max_speed": 1000,
+        "acceleration": 50
       }
     }
   },

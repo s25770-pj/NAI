@@ -34,33 +34,26 @@ font = pygame.font.Font(None, 36)
 
 # Launcher initialization
 launcher = Launcher(missiles_limit=5, default_reload_time=1, x=300, y=300)
+TYPES = config['MISSILE']['TYPES']
 missile = Missile(
-    strength=config['MISSILE']['TYPES']['LONG_RANGE']['STRENGTH'],
-    radius=config['MISSILE']['TYPES']['LONG_RANGE']['RADIUS'],
-    max_speed=config['MISSILE']['TYPES']['LONG_RANGE']['MAX_SPEED'],
-    acceleration=config['MISSILE']['TYPES']['LONG_RANGE']['ACCELERATION'],
+    **TYPES['LONG_RANGE'],
     type='long',
     x=launcher.x,
     y=launcher.y)
 missile2 = Missile(
-    strength=config['MISSILE']['TYPES']['SHORT_RANGE']['STRENGTH'],
-    radius=config['MISSILE']['TYPES']['SHORT_RANGE']['RADIUS'],
-    max_speed=config['MISSILE']['TYPES']['SHORT_RANGE']['MAX_SPEED'],
-    acceleration=config['MISSILE']['TYPES']['SHORT_RANGE']['ACCELERATION'],
+    **TYPES['SHORT_RANGE'],
     type='short',
     x=launcher.x,
     y=launcher.y)
 missile3 = Missile(
-    strength=config['MISSILE']['TYPES']['MEDIUM_RANGE']['STRENGTH'],
-    radius=config['MISSILE']['TYPES']['MEDIUM_RANGE']['RADIUS'],
-    max_speed=config['MISSILE']['TYPES']['MEDIUM_RANGE']['MAX_SPEED'],
-    acceleration=config['MISSILE']['TYPES']['MEDIUM_RANGE']['ACCELERATION'],
+    **TYPES['MEDIUM_RANGE'],
     type='medium',
     x=launcher.x,
     y=launcher.y)
 # TODO: change for reload_missile()
 launcher._add_missile(missile)
 launcher._add_missile(missile2)
+launcher._add_missile(missile3)
 launcher._add_missile(missile3)
 
 ufo = UFO(speed=200, max_speed=600, altitude=500, temperature=70, x=350, y=120)

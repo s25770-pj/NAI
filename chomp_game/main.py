@@ -1,7 +1,7 @@
 #Authors: Jakub Pobłocki s25770, Kacper Pecka s25668
 
 #All necessary information is available at:
-#https://github.com/s25770-pj/NAI_CHOMP/blob/main/README.md
+#https://github.com/s25770-pj/NAI_CHOMP/blob/main/chomp_game/README.md
 
 from chomp_game.Chomp_GUI import choose_game_mode
 
