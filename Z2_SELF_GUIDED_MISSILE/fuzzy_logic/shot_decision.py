@@ -32,8 +32,8 @@ altitude['high'] = fuzz.trimf(altitude.universe, [4000, 20000, 20000])
 
 # Consequent
 do_shot = ctrl.Consequent(np.arange(0, 101, 1), 'fire_missile')
-do_shot['no'] = fuzz.trimf(do_shot.universe, [0, 0, 50])
-do_shot['yes'] = fuzz.trimf(do_shot.universe, [40, 100, 100])
+do_shot['no'] = fuzz.trimf(do_shot.universe, [0, 0, 0.5])
+do_shot['yes'] = fuzz.trimf(do_shot.universe, [0.5, 1, 1])
 
 # Rules
 formatted_rules = []

@@ -1,6 +1,7 @@
-from pydantic import BaseModel, confloat, conint, Field
+from pydantic import BaseModel, confloat, conint, Field, constr
 from uuid import UUID, uuid4
 import pygame
+from typing import Literal
 
 
 class Missile(BaseModel):
@@ -9,6 +10,7 @@ class Missile(BaseModel):
     radius: confloat(gt=0)
     max_speed: conint(gt=0)
     acceleration: conint(gt=0)
+    type: Literal['short', 'medium', 'long']
     x: conint(ge=0)
     y: conint(ge=0)
     is_launched: bool = False

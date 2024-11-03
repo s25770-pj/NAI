@@ -44,7 +44,22 @@ class Launcher(BaseModel):
         for missile in self.missiles:
             print(missile)
 
-    def add_missile(self, missile: Missile):
+    def get_missile_by_fuzzy_value(self, fuzzy_value: float) -> Missile:
+        type = ''
+        if fuzzy_value < 1:
+            type = 'short'
+        elif fuzzy_value < 2:
+            type = 'medium'
+        elif fuzzy_value < 3:
+            type = 'long'
+        print('self.missiles:', self.missiles)
+        print(f'missile_type: {self.missiles[0].type}')
+        print(f'type: {type}')
+        print(f'fuzzy_value: {fuzzy_value}')
+        print(f'missile list: {[missile for missile in self.missiles if missile.type == type]}')
+        return [missile for missile in self.missiles if missile.type == type][0]
+
+    def _add_missile(self, missile: Missile):
         """
         Adds missile to launcher.
         :param missile: missile object to add
@@ -59,16 +74,19 @@ class Launcher(BaseModel):
         Search objects in range on the field
         :return: Lists of pairs of UFO objects and distances from launcher
         """
+        def _calc_distance(x1, x2, y1, y2):
+            return ((x2-x1)**2+(y2-y1)**2)**(1/2)
+
         # TODO: zrobić rozróżnienie na przyjazne i nieprzyjazne - poza tematyką zadania
         UFOs = UFO.all()
-        detected_UFOs = []
+        detected_ufo_in_range = []
 
         for ufo in UFOs:
             ufo_speed = ufo.speed
             ufo_altitude = ufo.altitude
             # TODO: Można zrobić oddzielny model od ostrzeżeń, które będą później wyświetlane
-            distance = ((ufo.x-self.x)**2+(ufo.y-self.y)**2)**(1/2)
-            # TODO: Dodać sprawdzanie czy uzbrojony i czy sie rusza
+            distance = _calc_distance(ufo.x, self.x, ufo.y, self.y)
+            # TODO: Dodać sprawdzanie czy uzbrojony i customowe czy sie rusza
             threat_level = calculate_threat_level(
                 motion=1,
                 weapon=1,
@@ -80,19 +98,21 @@ class Launcher(BaseModel):
                 speed_input=ufo_speed,
                 altitude_input=ufo_altitude
             )
-            required_missile = calculate_required_missile(
-                distance_input=distance,
-                speed_input=ufo_speed,
-                altitude_input=ufo_altitude
-            )
+            if distance * 10 <= max(self.missiles, key=lambda m: m.radius).radius:
+                detected_ufo_in_range.append([ufo, distance * 10])
+            if shot_rightness > 0.5:
+                required_missile = calculate_required_missile(
+                    distance_input=distance,
+                    speed_input=ufo_speed,
+                    altitude_input=ufo_altitude
+                )
+                required_missile = self.get_missile_by_fuzzy_value(required_missile)
+                print(f'Launcher: {self.uuid} detected UFO, details: {ufo.uuid} |'
+                      f' Decision - threat_level: {round(threat_level, 2)}%,'
+                      f' shot_rightness: {round(shot_rightness, 2)*100}%,'
+                      f' required_missile: {required_missile.serial_number},')
+        return detected_ufo_in_range
 
-            if distance*10 <= max(self.missiles, key=lambda m: m.radius).radius:
-                detected_UFOs.append([ufo, distance*10])
-            print(f'Launcher: {self.uuid} detected UFO, details: {ufo.uuid} |'
-                  f' Decision - threat_level: {round(threat_level, 2)}%,'
-                  f' shot_rightness: {round(shot_rightness, 2)}%,'
-                  f' required_missile: {round(required_missile, 2)},')
-        return detected_UFOs
 
     async def reload_missile(self, missile: Missile):
         """
@@ -101,9 +121,17 @@ class Launcher(BaseModel):
         :return:
         """
         await asyncio.sleep(self.reload_time)
-        self.add_missile(missile)
+        self._add_missile(missile)
 
     def draw(self, screen, color, screen_width, screen_height):
+        """
+        Draws object
+        :param screen: screen object
+        :param color: object color
+        :param screen_width:
+        :param screen_height:
+        :return:
+        """
         pygame.draw.rect(screen, color, (screen_width // 2 - 10, screen_height - 50, 20, 10))
 
     # validation

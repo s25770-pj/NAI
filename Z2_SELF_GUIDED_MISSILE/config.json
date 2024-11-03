@@ -30,7 +30,7 @@
         "MAX_SPEED": 1000,
         "ACCELERATION": 50
       },
-      "MID_RANGE": {
+      "MEDIUM_RANGE": {
         "STRENGTH": 500,
         "RADIUS": 1800,
         "MAX_SPEED": 1000,

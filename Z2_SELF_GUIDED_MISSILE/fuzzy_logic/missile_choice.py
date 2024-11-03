@@ -9,7 +9,7 @@ with open('./config.json', 'r') as file:
     config = json.load(file)
 
 # Antecedents
-distance = ctrl.Antecedent(np.arange(0, 10001, 1), 'distance')
+distance = ctrl.Antecedent(np.arange(0, 3001, 1), 'distance')
 distance['close'] = fuzz.trimf(distance.universe, [0, 0, 1500])
 distance['medium'] = fuzz.trimf(distance.universe, [1400, 1800, 2200])
 distance['far'] = fuzz.trimf(distance.universe, [2000, 3000, 3000])
@@ -25,7 +25,7 @@ altitude['medium'] = fuzz.trimf(altitude.universe, [500, 1000, 5000])
 altitude['high'] = fuzz.trimf(altitude.universe, [4000, 20000, 20000])
 
 # Consequent
-missile_type = ctrl.Consequent(np.arange(0, 6, 1), 'fire_missile')
+missile_type = ctrl.Consequent(np.arange(0, 3, 1), 'fire_missile')
 missile_type['short'] = fuzz.trimf(missile_type.universe, [0, 0, 1])
 missile_type['medium'] = fuzz.trimf(missile_type.universe, [0, 1, 2])
 missile_type['long'] = fuzz.trimf(missile_type.universe, [1, 2, 2])

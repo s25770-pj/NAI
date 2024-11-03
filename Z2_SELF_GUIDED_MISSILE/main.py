@@ -19,7 +19,6 @@ import pygame
 from Z2_SELF_GUIDED_MISSILE.map.terrain import draw_terrain
 from Z2_SELF_GUIDED_MISSILE.models.missile import Missile
 from models.launcher import Launcher
-from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.shot_decision import threat_level
 from Z2_SELF_GUIDED_MISSILE.models.ufo import UFO
 
 with open('./config.json', 'r') as file:
@@ -36,17 +35,37 @@ font = pygame.font.Font(None, 36)
 # Launcher initialization
 launcher = Launcher(missiles_limit=5, default_reload_time=1, x=300, y=300)
 missile = Missile(
-    strength=config['MISSILE']['TYPES']['MID_RANGE']['STRENGTH'],
-    radius=config['MISSILE']['TYPES']['MID_RANGE']['RADIUS'],
-    max_speed=config['MISSILE']['TYPES']['MID_RANGE']['MAX_SPEED'],
-    acceleration=config['MISSILE']['TYPES']['MID_RANGE']['ACCELERATION'],
-    x=screen_width // 2,
-    y=screen_height - 50)
-launcher.add_missile(missile)
+    strength=config['MISSILE']['TYPES']['LONG_RANGE']['STRENGTH'],
+    radius=config['MISSILE']['TYPES']['LONG_RANGE']['RADIUS'],
+    max_speed=config['MISSILE']['TYPES']['LONG_RANGE']['MAX_SPEED'],
+    acceleration=config['MISSILE']['TYPES']['LONG_RANGE']['ACCELERATION'],
+    type='long',
+    x=launcher.x,
+    y=launcher.y)
+missile2 = Missile(
+    strength=config['MISSILE']['TYPES']['SHORT_RANGE']['STRENGTH'],
+    radius=config['MISSILE']['TYPES']['SHORT_RANGE']['RADIUS'],
+    max_speed=config['MISSILE']['TYPES']['SHORT_RANGE']['MAX_SPEED'],
+    acceleration=config['MISSILE']['TYPES']['SHORT_RANGE']['ACCELERATION'],
+    type='short',
+    x=launcher.x,
+    y=launcher.y)
+missile3 = Missile(
+    strength=config['MISSILE']['TYPES']['MEDIUM_RANGE']['STRENGTH'],
+    radius=config['MISSILE']['TYPES']['MEDIUM_RANGE']['RADIUS'],
+    max_speed=config['MISSILE']['TYPES']['MEDIUM_RANGE']['MAX_SPEED'],
+    acceleration=config['MISSILE']['TYPES']['MEDIUM_RANGE']['ACCELERATION'],
+    type='medium',
+    x=launcher.x,
+    y=launcher.y)
+# TODO: change for reload_missile()
+launcher._add_missile(missile)
+launcher._add_missile(missile2)
+launcher._add_missile(missile3)
 
 ufo = UFO(speed=200, max_speed=600, altitude=500, temperature=70, x=350, y=120)
-ufo2 = UFO(speed=250, max_speed=400, altitude=1200, temperature=50, x=50, y=20)
-#
+ufo2 = UFO(speed=250, max_speed=400, altitude=5200, temperature=50, x=3050, y=920)
+
 # Missile image loading
 bullet_image = pygame.image.load('bullet.svg')
 bullet_image = pygame.transform.scale(bullet_image, (20, 20))
@@ -56,13 +75,6 @@ async def reload_missile_task(missile):
     # print(f"Starting reload for missile {missile}")
     await launcher.reload_missile(missile)
     # print(f"Reload complete for missile {missile}")
-
-def scan_tick(motion_input, weapon_input, distance_input):
-    # TODO: funkcja sprawdzająca pokolei czy coś wykrywa, czy jest jakieś zagrożenie, czy strzelić, wybrać pocisk etc.
-    #  Do przeniesienia potem do modelu wyrzutni.
-    #  Dopisać funkcję wykrywającą obiekty
-    if threat_level(motion_input, weapon_input, distance_input):
-        pass
 
 # Main game loop
 async def main_loop():
@@ -78,20 +90,18 @@ async def main_loop():
                 running = False
 
             # Adding the missile to launcher using r key
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    try:
-                        # TODO: x i y pojawiania się pocisku do zmiany na x i y wyrzutni
-                        missile = Missile(
-                            strength=config['MISSILE']['TYPES']['MID_RANGE']['STRENGTH'],
-                            radius=config['MISSILE']['TYPES']['MID_RANGE']['RADIUS'],
-                            max_speed=config['MISSILE']['TYPES']['MID_RANGE']['MAX_SPEED'],
-                            acceleration=config['MISSILE']['TYPES']['MID_RANGE']['ACCELERATION'],
-                            x=screen_width // 2,
-                            y=screen_height - 50)
-                        asyncio.create_task(reload_missile_task(missile))
-                    except ValueError as e:
-                        print('Error', e)
+            # if event.type == pygame.KEYDOWN:
+                # if event.key == pygame.K_r:
+                #     try:
+                #         # TODO: resp pocisku ustawic na kordy wyrzutni
+                #         missile = Missile(
+                #             strength=config['MISSILE']['TYPES']['MID_RANGE']['STRENGTH'],
+                #             radius=config['MISSILE']['TYPES']['MID_RANGE']['RADIUS'],
+                #             max_speed=config['MISSILE']['TYPES']['MID_RANGE']['MAX_SPEED'],
+                #             acceleration=config['MISSILE']['TYPES']['MID_RANGE']['ACCELERATION'],)
+                #         asyncio.create_task(reload_missile_task(missile))
+                #     except ValueError as e:
+                #         print('Error', e)
 
         draw_terrain(screen, screen_width, screen_height)
 
@@ -108,7 +118,6 @@ async def main_loop():
         launcher.draw(screen, config['LAUNCHER']['COLOR'], screen_width, screen_height)
         for missile in launcher.launched_missiles:
             missile.draw(screen, config['MISSILE']['COLOR'])
-
         launcher.scan()
 
         pygame.display.flip()
