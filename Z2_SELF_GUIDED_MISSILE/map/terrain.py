@@ -1,9 +1,7 @@
-import json
 # import noise
 import pygame
+from Z2_SELF_GUIDED_MISSILE.config import Settings
 
-with open('./config.json', 'r') as file:
-    config = json.load(file)
 
 # TODO: Napisać nowe generowanie terenu
 #  zmienne przeniesione do configu
@@ -19,8 +17,8 @@ with open('./config.json', 'r') as file:
 # Draw the terrain on screen
 def draw_terrain(screen, screen_width, screen_height):
     # Draw the sky and ground colors
-    screen.fill((config['MAP']['COLORS']['SKY']))  # Light blue sky
-    pygame.draw.rect(screen, config['MAP']['COLORS']['GRASS'], (0, screen_height // 2, screen_width, screen_height // 2))  # Ground
+    screen.fill((Settings().map_settings.colors['sky']))  # Light blue sky
+    pygame.draw.rect(screen, Settings().map_settings.colors['grass'], (0, screen_height // 2, screen_width, screen_height // 2))  # Ground
 
     # Draw mountains
     # pygame.draw.polygon(screen, BROWN, [(0, screen_height)] + points + [(screen_width, screen_height)])

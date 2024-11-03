@@ -2,12 +2,9 @@ import json
 import numpy as np
 import skfuzzy as fuzz
 
-from math import ceil
 from skfuzzy import control as ctrl
+from Z2_SELF_GUIDED_MISSILE.config import Settings
 
-
-with open('./config.json') as file:
-    config = json.load(file)
 
 # Antecedents
 motion = ctrl.Antecedent(np.array([0, 1]), 'motion')  # 0: Stationary, 1: Moving
@@ -33,7 +30,7 @@ threat_level['high'] = fuzz.trimf(threat_level.universe, [50, 100, 100])
 formatted_rules = []
 
 # Get rules from json file
-with open(config['RULES']['THREAT']['URL'], 'r') as file:
+with open(Settings().fuzzy_settings.fuzzy_rules.threat['url'], 'r') as file:
     rules = json.load(file)
 
     for rule in rules:

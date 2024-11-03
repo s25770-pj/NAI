@@ -12,17 +12,13 @@ Przygotowanie środowiska:
    pip install numpy scikit-fuzzy
 """
 import asyncio
-import json
-
 import pygame
 
 from Z2_SELF_GUIDED_MISSILE.map.terrain import draw_terrain
 from Z2_SELF_GUIDED_MISSILE.models.missile import Missile
 from models.launcher import Launcher
 from Z2_SELF_GUIDED_MISSILE.models.ufo import UFO
-
-with open('./config.json', 'r') as file:
-    config = json.load(file)
+from Z2_SELF_GUIDED_MISSILE.config import Settings
 
 # Pygame settings
 pygame.init()
@@ -35,26 +31,26 @@ font = pygame.font.Font(None, 36)
 # Launcher initialization
 launcher = Launcher(missiles_limit=5, default_reload_time=1, x=300, y=300)
 missile = Missile(
-    strength=config['MISSILE']['TYPES']['LONG_RANGE']['STRENGTH'],
-    radius=config['MISSILE']['TYPES']['LONG_RANGE']['RADIUS'],
-    max_speed=config['MISSILE']['TYPES']['LONG_RANGE']['MAX_SPEED'],
-    acceleration=config['MISSILE']['TYPES']['LONG_RANGE']['ACCELERATION'],
+    strength=Settings().missile_settings.types.long_range['strength'],
+    radius=Settings().missile_settings.types.long_range['radius'],
+    max_speed=Settings().missile_settings.types.long_range['max_speed'],
+    acceleration=Settings().missile_settings.types.long_range['acceleration'],
     type='long',
     x=launcher.x,
     y=launcher.y)
 missile2 = Missile(
-    strength=config['MISSILE']['TYPES']['SHORT_RANGE']['STRENGTH'],
-    radius=config['MISSILE']['TYPES']['SHORT_RANGE']['RADIUS'],
-    max_speed=config['MISSILE']['TYPES']['SHORT_RANGE']['MAX_SPEED'],
-    acceleration=config['MISSILE']['TYPES']['SHORT_RANGE']['ACCELERATION'],
+    strength=Settings().missile_settings.types.short_range['strength'],
+    radius=Settings().missile_settings.types.short_range['radius'],
+    max_speed=Settings().missile_settings.types.short_range['max_speed'],
+    acceleration=Settings().missile_settings.types.short_range['acceleration'],
     type='short',
     x=launcher.x,
     y=launcher.y)
 missile3 = Missile(
-    strength=config['MISSILE']['TYPES']['MEDIUM_RANGE']['STRENGTH'],
-    radius=config['MISSILE']['TYPES']['MEDIUM_RANGE']['RADIUS'],
-    max_speed=config['MISSILE']['TYPES']['MEDIUM_RANGE']['MAX_SPEED'],
-    acceleration=config['MISSILE']['TYPES']['MEDIUM_RANGE']['ACCELERATION'],
+    strength=Settings().missile_settings.types.medium_range['strength'],
+    radius=Settings().missile_settings.types.medium_range['radius'],
+    max_speed=Settings().missile_settings.types.medium_range['max_speed'],
+    acceleration=Settings().missile_settings.types.medium_range['acceleration'],
     type='medium',
     x=launcher.x,
     y=launcher.y)
@@ -115,15 +111,14 @@ async def main_loop():
         for index, _ in enumerate(launcher.loaded_missiles):
             screen.blit(bullet_image, (25 * index, 0))
 
-        launcher.draw(screen, config['LAUNCHER']['COLOR'], screen_width, screen_height)
+        launcher.draw(screen, Settings().launcher_settings.color, screen_width, screen_height)
         for missile in launcher.launched_missiles:
-            missile.draw(screen, config['MISSILE']['COLOR'])
+            missile.draw(screen, Settings.missile_settings.color)
         launcher.scan()
 
         pygame.display.flip()
         await asyncio.sleep(0.01)
         clock.tick(30)
-
 
 if __name__ == '__main__':
     asyncio.run(main_loop())

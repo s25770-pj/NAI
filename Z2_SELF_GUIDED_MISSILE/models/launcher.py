@@ -3,7 +3,7 @@ import pygame
 
 from pydantic import BaseModel, conint, field_validator, Field
 from uuid import UUID, uuid4
-from typing import List, Any
+from typing import List, Any, Optional
 
 from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.threat_level import calculate_threat_level
 from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.shot_decision import calculate_shot_rightness
@@ -44,7 +44,7 @@ class Launcher(BaseModel):
         for missile in self.missiles:
             print(missile)
 
-    def get_missile_by_fuzzy_value(self, fuzzy_value: float) -> Missile:
+    def get_missile_by_fuzzy_value(self, fuzzy_value: float) -> Optional[Missile]:
         type = ''
         if fuzzy_value < 1:
             type = 'short'
@@ -52,12 +52,9 @@ class Launcher(BaseModel):
             type = 'medium'
         elif fuzzy_value < 3:
             type = 'long'
-        print('self.missiles:', self.missiles)
-        print(f'missile_type: {self.missiles[0].type}')
-        print(f'type: {type}')
-        print(f'fuzzy_value: {fuzzy_value}')
-        print(f'missile list: {[missile for missile in self.missiles if missile.type == type]}')
-        return [missile for missile in self.missiles if missile.type == type][0]
+        matching_missiles = [missile for missile in self.missiles if missile.type == type]
+
+        return matching_missiles[0] if len(matching_missiles) > 0 else []
 
     def _add_missile(self, missile: Missile):
         """
@@ -110,7 +107,7 @@ class Launcher(BaseModel):
                 print(f'Launcher: {self.uuid} detected UFO, details: {ufo.uuid} |'
                       f' Decision - threat_level: {round(threat_level, 2)}%,'
                       f' shot_rightness: {round(shot_rightness, 2)*100}%,'
-                      f' required_missile: {required_missile.serial_number},')
+                      f' required_missile: {required_missile.serial_number if required_missile else None},')
         return detected_ufo_in_range
 
 
