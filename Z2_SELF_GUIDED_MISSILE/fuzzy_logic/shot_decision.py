@@ -3,10 +3,7 @@ import numpy as np
 import skfuzzy as fuzz
 
 from skfuzzy import control as ctrl
-
-
-with open('./config.json', 'r') as file:
-    config = json.load(file)
+from Z2_SELF_GUIDED_MISSILE.config import Settings
 
 # Antecedents
 # TODO: przenieść do sterowania pociskiem
@@ -40,7 +37,7 @@ formatted_rules = []
 
 # Get rules from json file
 # TODO: Można dorobić funkcję statyczną do tego
-with open(config['RULES']['SHOT_DECISION']['URL'], 'r') as file:
+with open(Settings().fuzzy_settings.fuzzy_rules.shot_decision['url'], 'r') as file:
     rules = json.load(file)
 
     for rule in rules:

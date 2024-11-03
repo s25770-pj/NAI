@@ -3,10 +3,8 @@ import numpy as np
 import skfuzzy as fuzz
 
 from skfuzzy import control as ctrl
+from Z2_SELF_GUIDED_MISSILE.config import Settings
 
-
-with open('./config.json', 'r') as file:
-    config = json.load(file)
 
 # Antecedents
 distance = ctrl.Antecedent(np.arange(0, 3001, 1), 'distance')
@@ -34,7 +32,7 @@ missile_type['long'] = fuzz.trimf(missile_type.universe, [1, 2, 2])
 formatted_rules = []
 
 # Get rules from json file
-with open(config['RULES']['MISSILE_CHOICE']['URL'], 'r') as file:
+with open(Settings().fuzzy_settings.fuzzy_rules.missile_choice['url'], 'r') as file:
     rules = json.load(file)
 
     for rule in rules:
