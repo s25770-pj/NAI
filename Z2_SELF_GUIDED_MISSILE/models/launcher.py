@@ -22,6 +22,8 @@ class Launcher(BaseModel):
     width: conint(ge=0)
     color: Tuple[int, int, int]
     range: Dict[str, int]
+    max_range: conint(ge=0)
+
     @property
     def loaded_missiles(self) -> List[Missile]:
         return [missile for missile in self.missiles if not missile.is_launched]
@@ -45,7 +47,7 @@ class Launcher(BaseModel):
             # TODO: Implement a separate model for warnings that will be displayed later
             shot_rightness = calculate_shot_rightness(threat_level_input=threat_level, speed_input=ufo.speed, altitude_input=ufo.altitude)
             # TODO: Add check if armed and custom movement check
-            if distance * 10 <= max(self.missiles, key=lambda m: m.radius).radius:
+            if distance * 10 <= self.max_range:
                 detected_ufo_in_range.append([ufo, distance * 10])
             if shot_rightness > 0.5:
                 required_missile = calculate_required_missile(distance_input=distance, speed_input=ufo.speed, altitude_input=ufo.altitude)

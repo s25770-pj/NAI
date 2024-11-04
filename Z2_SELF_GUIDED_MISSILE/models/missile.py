@@ -1,4 +1,6 @@
-from pydantic import BaseModel, confloat, conint, Field, constr
+import pygame
+
+from pydantic import BaseModel, confloat, conint, Field
 from uuid import UUID, uuid4
 from typing import Literal
 
@@ -53,5 +55,3 @@ class Missile(BaseModel):
 
     #def __repr__(self):
     #    return f'Missile - serial number: {self.serial_number}, strength: {self.strength}, radius: {self.radius}, max_speed: {self.max_speed}'
-
-
