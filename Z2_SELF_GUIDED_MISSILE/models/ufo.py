@@ -26,6 +26,7 @@ class UFO(BaseModel):
     x: confloat(gt=0) = None
     y: confloat(gt=0) = None
     screen_width: conint(ge=0)
+
     # Class variable to hold all instances
     manager: ClassVar[UFOManager] = UFOManager()
 
@@ -33,12 +34,15 @@ class UFO(BaseModel):
         super().__init__(**data)
         # Append each created instance to the _instances list
         UFO.manager.add_instance(self)
+
     def move(self):
-        self.x-=self.speed//10
+        self.x -= self.speed // 10
         if self.x < 0:
             del UFO.manager.UFOs[self.uuid]
-    def move_y(self,position_y):
-        self.y=position_y
+
+    def move_y(self, position_y):
+        self.y = position_y
+
     @classmethod
     def all(cls):
         return cls.manager.get_all()

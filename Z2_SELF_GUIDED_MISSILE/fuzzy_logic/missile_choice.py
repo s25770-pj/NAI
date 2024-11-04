@@ -5,7 +5,6 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 from Z2_SELF_GUIDED_MISSILE.config import Settings
 
-
 # Antecedents
 distance = ctrl.Antecedent(np.arange(0, 3001, 1), 'distance')
 distance['close'] = fuzz.trimf(distance.universe, [0, 0, 1500])
@@ -43,6 +42,7 @@ with open(Settings().fuzzy_settings.fuzzy_rules.missile_choice['url'], 'r') as f
             ctrl.Rule(distance[conditions['distance']] &
                       speed[conditions['speed']] &
                       altitude[conditions['altitude']], missile_type[action]))
+
 
 def calculate_required_missile(distance_input: float, speed_input: float, altitude_input: float) -> float:
     """

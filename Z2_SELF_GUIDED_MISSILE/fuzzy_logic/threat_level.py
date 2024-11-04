@@ -64,5 +64,3 @@ def calculate_threat_level(motion: float, weapon: float, distance: float) -> flo
     threat_level_sim.compute()
 
     return threat_level_sim.output['threat_level']
-
-
