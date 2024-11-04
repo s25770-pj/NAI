@@ -1,10 +1,19 @@
 {
+  "GAME": {
+    "screen_width": 500,
+    "screen_height": 600,
+    "title": "Launcher and Missiles"
+  },
   "MAP": {
     "COLORS": {
       "GRASS": [34, 139, 34],
-      "SKY": [135, 206, 235],
+      "SKY": [105, 156, 245],
       "BLACK": [0, 0, 0],
       "BROWN": [139, 69, 19]
+    },
+    "GRASS":{
+      "height":400,
+      "y": 400
     },
     "SIZES": {
       "TERRAIN_HEIGHT": 150,
@@ -16,8 +25,19 @@
 
   "LAUNCHER": {
     "COLOR": [255, 255, 255],
+    "DRAW": {
+      "x": 250,
+      "y":420,
+      "width": 50,
+      "height": 25
+    },
     "SETUP": {
-      "MISSILES_LIMIT": 100
+      "MISSILES_LIMIT": 100,
+      "RANGE": {
+        "SHORT": 100,
+        "MEDIUM": 150,
+        "LONG": 220
+      }
     }
   },
 

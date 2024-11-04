@@ -1,6 +1,5 @@
 from pydantic import BaseModel, confloat, conint, Field, constr
 from uuid import UUID, uuid4
-import pygame
 from typing import Literal
 
 
@@ -52,7 +51,7 @@ class Missile(BaseModel):
         """
         pygame.draw.circle(screen, color, (self.x, int(self.y)), self.radius)
 
-    def __repr__(self):
-        return f'Missile - serial number: {self.serial_number}, strength: {self.strength}, radius: {self.radius}, max_speed: {self.max_speed}'
+    #def __repr__(self):
+    #    return f'Missile - serial number: {self.serial_number}, strength: {self.strength}, radius: {self.radius}, max_speed: {self.max_speed}'
 
 

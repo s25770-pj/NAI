@@ -12,7 +12,7 @@ class MapSettings(BaseModel):
         "brown": [139, 69, 19]
     }
     sizes: dict[str, float] = {
-        "terrain_height": 150,
+        "terrain_height": 0,
         "mountain_height": 300,
         "scale": 0.2,
         "octaves": 6
@@ -21,7 +21,7 @@ class MapSettings(BaseModel):
 
 # Launcher settings
 class LauncherSettings(BaseModel):
-    color: List[int] = [255, 255, 255]
+    color: List[int] = [255, 205, 255]
     setup: dict[str, int] = {"missiles_limit": 100}
 
 
