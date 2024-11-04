@@ -11,7 +11,7 @@ class Slider:
 
     def render(self, screen):
         pygame.draw.rect(screen, (200, 200, 200), self.rect)
-        pygame.draw.circle(screen, (0, 0, 255), (int(self.knob_x), self.rect.y + self.rect.height // 2), self.knob_radius)
+        pygame.draw.circle(screen, (100, 100, 100), (int(self.knob_x), self.rect.y + self.rect.height // 2), self.knob_radius)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:

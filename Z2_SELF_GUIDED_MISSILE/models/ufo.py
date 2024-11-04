@@ -19,7 +19,7 @@ class UFOManager:
 
 class UFO(BaseModel):
     uuid: UUID = Field(default_factory=uuid4)
-    speed: confloat(gt=0) = None
+    speed: confloat() = None
     max_speed: confloat(gt=0) = None
     altitude: confloat(gt=0) = None
     temperature: confloat(gt=0) = None
@@ -34,7 +34,7 @@ class UFO(BaseModel):
         # Append each created instance to the _instances list
         UFO.manager.add_instance(self)
     def move(self):
-        self.x-=self.speed//10
+        self.x -= (self.speed * 0.0027778)
         if self.x < 0:
             del UFO.manager.UFOs[self.uuid]
     def move_y(self,position_y):

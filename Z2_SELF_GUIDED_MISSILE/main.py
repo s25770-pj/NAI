@@ -46,19 +46,17 @@ async def handle_events(panel):
         if event.type == pygame.QUIT:
             return False
         for slider in panel.sliders.values():
-            slider.handle_event(event)
+            slider["model"].handle_event(event)
         for button in panel.buttons.values():
             button.handle_event(event)
     return True
 
 
-async def main_loop(screen, screen_width, screen_height, config, panel, launcher):
+async def main_loop(screen, screen_width, config, panel, launcher):
     """Main game loop."""
     clock = pygame.time.Clock()
-    model = UFO(speed=1, max_speed=600, altitude=500, temperature=70, x=screen_width + 50, y=1,
+    model = UFO(speed=0, max_speed=600, altitude=500, temperature=70, x=screen_width + 50, y=1,
                 screen_width=config["GAME"]["screen_width"])
-    UFO(speed=20, max_speed=600, altitude=500, temperature=70, x=screen_width + 50, y=1,
-        screen_width=config["GAME"]["screen_width"])
     terrain = Terrain(screen_width,config["MAP"])
 
     while await handle_events(panel):
@@ -71,9 +69,6 @@ async def main_loop(screen, screen_width, screen_height, config, panel, launcher
         position_y = values["position_y"]
         model.move_y(position_y)
 
-        font = pygame.font.Font(None, 24)
-        position_y_text = font.render(f'Position Y: {int(position_y)}', True, (0, 0, 0))
-        screen.blit(position_y_text, (screen_width + 350, screen_height - 50))
 
 
         for ufo in UFO.all():
@@ -98,5 +93,5 @@ if __name__ == '__main__':
     load_missiles(launcher, config['MISSILE']['TYPES'])
     panel = Panel(screen_width, screen_height, config["MAP"]["GRASS"])
 
-    asyncio.run(main_loop(screen, screen_width, screen_height, config, panel, launcher))
+    asyncio.run(main_loop(screen, screen_width, config, panel, launcher))
     pygame.quit()

@@ -21,6 +21,7 @@ class Launcher(BaseModel):
     height: conint(ge=0)
     width: conint(ge=0)
     color: Tuple[int, int, int]
+
     range: Dict[str, int]
     @property
     def loaded_missiles(self) -> List[Missile]:
