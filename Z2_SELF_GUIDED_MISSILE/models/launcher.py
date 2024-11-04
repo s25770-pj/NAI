@@ -11,6 +11,7 @@ from Z2_SELF_GUIDED_MISSILE.fuzzy_logic.missile_choice import calculate_required
 from Z2_SELF_GUIDED_MISSILE.models.missile import Missile
 from Z2_SELF_GUIDED_MISSILE.models.ufo import UFO
 
+
 class Launcher(BaseModel):
     uuid: UUID = Field(default_factory=uuid4)
     missiles_limit: conint(ge=0, le=100)
@@ -23,6 +24,8 @@ class Launcher(BaseModel):
     color: Tuple[int, int, int]
 
     range: Dict[str, int]
+    max_range: conint(ge=0)
+
     @property
     def loaded_missiles(self) -> List[Missile]:
         return [missile for missile in self.missiles if not missile.is_launched]
@@ -41,15 +44,17 @@ class Launcher(BaseModel):
         detected_ufo_in_range = []
         for ufo in UFO.all():
             # Calculate distance
-            distance = ((ufo.x - self.x)**2 + (ufo.y - self.y)**2)**0.5
+            distance = ((ufo.x - self.x) ** 2 + (ufo.y - self.y) ** 2) ** 0.5
             threat_level = calculate_threat_level(motion=1, weapon=1, distance=distance * 10)
             # TODO: Implement a separate model for warnings that will be displayed later
-            shot_rightness = calculate_shot_rightness(threat_level_input=threat_level, speed_input=ufo.speed, altitude_input=ufo.altitude)
+            shot_rightness = calculate_shot_rightness(threat_level_input=threat_level, speed_input=ufo.speed,
+                                                      altitude_input=ufo.altitude)
             # TODO: Add check if armed and custom movement check
-            if distance * 10 <= max(self.missiles, key=lambda m: m.radius).radius:
+            if distance * 10 <= self.max_range:
                 detected_ufo_in_range.append([ufo, distance * 10])
             if shot_rightness > 0.5:
-                required_missile = calculate_required_missile(distance_input=distance, speed_input=ufo.speed, altitude_input=ufo.altitude)
+                required_missile = calculate_required_missile(distance_input=distance, speed_input=ufo.speed,
+                                                              altitude_input=ufo.altitude)
                 required_missile = self.get_missile_by_fuzzy_value(required_missile)
         #         print(f'Launcher: {self.uuid} detected UFO, details: {ufo.uuid} |'
         #               f' Decision - threat_level: {round(threat_level, 2)}%,'
@@ -85,13 +90,12 @@ class Launcher(BaseModel):
         Draws the launcher on the screen.
         :param screen: The screen object where the launcher will be drawn.
         """
-        deg=360
+        deg = 360
         self.draw_dashed_circle(screen, (255, 0, 0), (self.x, self.y), self.range["SHORT"], 180, deg)
         self.draw_dashed_circle(screen, (200, 200, 0), (self.x, self.y), self.range["MEDIUM"], 180, deg)
         self.draw_dashed_circle(screen, (0, 255, 0), (self.x, self.y), self.range["LONG"], 180, deg)
 
-        pygame.draw.rect(screen, self.color, (self.x-self.width//2, self.y-self.height, self.width, self.height))
-
+        pygame.draw.rect(screen, self.color, (self.x - self.width // 2, self.y - self.height, self.width, self.height))
 
     async def reload_missile(self, missile: Missile):
         """
@@ -120,4 +124,3 @@ class Launcher(BaseModel):
         if missiles and len(missiles) > values.data['missiles_limit']:
             raise ValueError(f"Cannot have more than {values.data['missiles_limit']} missiles.")
         return missiles
-

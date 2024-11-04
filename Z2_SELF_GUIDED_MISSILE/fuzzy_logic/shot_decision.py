@@ -5,6 +5,7 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 from Z2_SELF_GUIDED_MISSILE.config import Settings
 
+
 # Antecedents
 # TODO: przenieść do sterowania pociskiem
 # temperature = ctrl.Antecedent(np.arange(0, 131, 1), 'temperature')
@@ -48,6 +49,7 @@ with open(Settings().fuzzy_settings.fuzzy_rules.shot_decision['url'], 'r') as fi
             ctrl.Rule(threat_level[conditions['threat_level']] &
                       speed[conditions['speed']] &
                       altitude[conditions['altitude']], do_shot[action]))
+
 
 def calculate_shot_rightness(threat_level_input: float, speed_input: float, altitude_input: float) -> float:
     '''
