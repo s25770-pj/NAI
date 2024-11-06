@@ -4,11 +4,11 @@ Jakub Pobłocki |  Kacper Pecka
 
 The system, as its name suggests, is an automated anti-aircraft defense mechanism that leverages fuzzy logic to assess and respond to airborne threats. It is structured into three distinct computational modules:
 
-## Threat Assessment Module: This initial module calculates the threat level posed by an object, factoring in the current distance between the missile launcher and the target, the object’s movement status, and whether it is armed. These inputs collectively enable the system to gauge the potential threat that the object represents.
+1. Threat Assessment Module: This initial module calculates the threat level posed by an object, factoring in the current distance between the missile launcher and the target, the object’s movement status, and whether it is armed. These inputs collectively enable the system to gauge the potential threat that the object represents.
 
-## Engagement Decision Module: Based on the assessed threat level, as well as the speed and trajectory of the incoming object, this module determines the need for missile deployment. This decision-making process ensures that countermeasures are only deployed when necessary, optimizing resource usage.
+2. Engagement Decision Module: Based on the assessed threat level, as well as the speed and trajectory of the incoming object, this module determines the need for missile deployment. This decision-making process ensures that countermeasures are only deployed when necessary, optimizing resource usage.
 
-## Missile Selection Module: For confirmed engagements, this final module identifies the most suitable missile type to neutralize the threat. This selection process is based on the target’s distance, speed, and trajectory, ensuring that the countermeasure is effectively matched to the threat profile.
+3. Missile Selection Module: For confirmed engagements, this final module identifies the most suitable missile type to neutralize the threat. This selection process is based on the target’s distance, speed, and trajectory, ensuring that the countermeasure is effectively matched to the threat profile.
 
 Each module operates in a sequence to ensure that the system provides a swift, accurate, and efficient response to airborne threats.
 
