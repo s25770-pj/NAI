@@ -15,7 +15,7 @@ class Panel:
     def create_UFO(self):
         # Pobieranie wysokości z suwaka
         altitude = self.sliders["altitude"]["model"].get_value()
-        y_position = self.altitude_to_y(altitude) -40
+        y_position = self.altitude_to_y(altitude)
 
         UFO(
             speed=self.sliders["speed"]["model"].get_value(),
@@ -23,7 +23,7 @@ class Panel:
             altitude=altitude,
             temperature=self.sliders["temperature"]["model"].get_value(),
             x=self.screen_size[0] + 25,
-            y=y_position,
+            y=y_position-20,
             screen_width=self.screen_size[0]
         )
         print("Fly with altitude:", altitude, "and y-position:", y_position)
@@ -31,8 +31,7 @@ class Panel:
     def altitude_to_y(self, altitude):
         altitude = max(0, min(altitude, self.max_height))
         normalized_altitude = altitude / self.max_height
-        y_position = self.grass_height * (1 - normalized_altitude)
-
+        y_position = max((self.grass_height) * (1 - normalized_altitude), 1)
         return round(y_position)
 
     def create_sliders(self):
@@ -65,6 +64,15 @@ class Panel:
             "send_UFO": Button(self.screen_size[0] + 200, 25, 200, 50, "Send me", [200, 200, 200], [0, 0, 0],
                                self.create_UFO)
         }
+    def draw_scale(self,screen,scale_interval):
+        pygame.draw.line(screen, (0, 0, 0), (self.screen_size[0], 0), (self.screen_size[0],self.screen_size[1]), 2)
+
+        for i in range(scale_interval, self.max_height-1, scale_interval):
+            pygame.draw.line(screen, (0, 0, 0), (self.screen_size[0]-10,self.altitude_to_y(i)), (self.screen_size[0]+10, self.altitude_to_y(i)), 1)
+            print(f'{i} {self.altitude_to_y(i)}')
+            font = pygame.font.Font(None, 16)
+            text = font.render(str(i), True, (0, 0, 0))
+            screen.blit(text, (self.screen_size[0]+10, self.altitude_to_y(i)-25))
 
     def render(self, screen):
 
@@ -78,4 +86,5 @@ class Panel:
                 True, (0, 0, 0)), text["position"])
         for button in self.buttons.values():
             button.render(screen)
+        self.draw_scale(screen,1000)
         return {key: slider["model"].get_value() for key, slider in self.sliders.items()}

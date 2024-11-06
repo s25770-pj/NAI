@@ -67,7 +67,6 @@ async def main_loop(screen, screen_width, config, panel, launcher):
     model = UFO(speed=0, max_speed=600, altitude=500, temperature=70, x=screen_width + 25, y=1,
                 screen_width=config["GAME"]["screen_width"])
     terrain = Terrain(screen_width, config["MAP"])
-    frame = 0
 
     # Start the scan task asynchronously
     scan_task = asyncio.create_task(scan_in_background(launcher))
@@ -93,10 +92,7 @@ async def main_loop(screen, screen_width, config, panel, launcher):
         model.move_y(altitude)
 
         for ufo in UFO.all():
-            if ufo.uuid == model.uuid:
-                screen.blit(image_model, (ufo.x, ufo.y))
-            else:
-                screen.blit(image_plane, (ufo.x, ufo.y))
+            screen.blit(image_model if ufo.uuid == model.uuid else image_plane, (ufo.x, ufo.y))
             ufo.move()
         launcher.draw(screen)
 
