@@ -1,7 +1,6 @@
 import asyncio
 import json
 import pygame
-from pygame.time import set_timer
 
 from Z2_SELF_GUIDED_MISSILE.map.terrain import Terrain
 from Z2_SELF_GUIDED_MISSILE.setting_panel.panel import Panel
@@ -65,7 +64,7 @@ async def scan_in_background(launcher):
 async def main_loop(screen, screen_width, config, panel, launcher):
     """Main game loop."""
     clock = pygame.time.Clock()
-    model = UFO(speed=0, max_speed=600, altitude=500, temperature=70, x=screen_width + 50, y=1,
+    model = UFO(speed=0, max_speed=600, altitude=500, temperature=70, x=screen_width + 25, y=1,
                 screen_width=config["GAME"]["screen_width"])
     terrain = Terrain(screen_width, config["MAP"])
     frame = 0
@@ -73,6 +72,11 @@ async def main_loop(screen, screen_width, config, panel, launcher):
     # Start the scan task asynchronously
     scan_task = asyncio.create_task(scan_in_background(launcher))
 
+    image_plane = pygame.image.load('texture/plane.png')
+    image_plane = pygame.transform.scale(image_plane, (80, 40))
+
+    image_model = image_plane.convert_alpha()
+    image_model.set_alpha(128)
     while True:
         # Handle events
         if not await handle_events(panel):
@@ -83,19 +87,17 @@ async def main_loop(screen, screen_width, config, panel, launcher):
         terrain.render(screen)
 
         # Draw sliders
-        values = panel.redner(screen)
+        values = panel.render(screen)
 
-        position_y = values["position_y"]
-        model.move_y(position_y)
-
-        # Draw the UFO model
-        image = pygame.image.load('texture/plane.png')
-        image = pygame.transform.scale(image, (80, 40))
+        altitude = values["altitude"]
+        model.move_y(altitude)
 
         for ufo in UFO.all():
-            screen.blit(image, (ufo.x, ufo.y))
+            if ufo.uuid == model.uuid:
+                screen.blit(image_model, (ufo.x, ufo.y))
+            else:
+                screen.blit(image_plane, (ufo.x, ufo.y))
             ufo.move()
-
         launcher.draw(screen)
 
         # Update the display
@@ -113,7 +115,7 @@ if __name__ == '__main__':
     screen, screen_width, screen_height = initialize_game(config)
     launcher = create_launcher(config)
     load_missiles(launcher, config['MISSILE']['TYPES'])
-    panel = Panel(screen_width, screen_height, config["MAP"]["GRASS"])
+    panel = Panel(screen_width, screen_height, config["MAP"]["GRASS"]["height"])
 
     # Run the game loop
     asyncio.run(main_loop(screen, screen_width, config, panel, launcher))

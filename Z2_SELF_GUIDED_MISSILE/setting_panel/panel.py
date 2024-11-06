@@ -1,63 +1,81 @@
-from tkinter import font
-
 import pygame
-
 from Z2_SELF_GUIDED_MISSILE.models.ufo import UFO
 from Z2_SELF_GUIDED_MISSILE.setting_panel.slider import Slider
 from Z2_SELF_GUIDED_MISSILE.setting_panel.button import Button
 
+
 class Panel:
-    def __init__(self, screen_width, screen_height,config):
+    def __init__(self, screen_width, screen_height, config):
         self.screen_size = (screen_width, screen_height)
-        self.sliders = self.create_sliders(config)
-        self.buttons = self.create_buttons(config)
+        self.max_height = 10_000
+        self.grass_height = int(config)
+        self.sliders = self.create_sliders()
+        self.buttons = self.create_buttons()
 
     def create_UFO(self):
-        UFO(speed=self.sliders["speed"]["model"].get_value(),
+        # Pobieranie wysokości z suwaka
+        altitude = self.sliders["altitude"]["model"].get_value()
+        y_position = self.altitude_to_y(altitude) -40
+
+        UFO(
+            speed=self.sliders["speed"]["model"].get_value(),
             max_speed=600,
-            altitude=self.sliders["position_y"]["model"].get_value(),
+            altitude=altitude,
             temperature=self.sliders["temperature"]["model"].get_value(),
-            x=self.screen_size[0] + 50, y=self.sliders["position_y"]["model"].get_value(),
-            screen_width=self.screen_size[0])
+            x=self.screen_size[0] + 25,
+            y=y_position,
+            screen_width=self.screen_size[0]
+        )
+        print("Fly with altitude:", altitude, "and y-position:", y_position)
 
-    def create_sliders(self,config):
+    def altitude_to_y(self, altitude):
+        altitude = max(0, min(altitude, self.max_height))
+        normalized_altitude = altitude / self.max_height
+        y_position = self.grass_height * (1 - normalized_altitude)
+
+        return round(y_position)
+
+    def create_sliders(self):
         return {
-            "position_y":{
-                "model":Slider(self.screen_size[0] + 50, self.screen_size[1] - 100, 200, 15, config["height"], 15),
+            "altitude": {
+                "model": Slider(self.screen_size[0] + 50, self.screen_size[1] - 100, 200, 50.0, self.max_height, 100),
                 "text": {
-                    "content":["Altitude: "],
-                    "position":(self.screen_size[0] + 300, self.screen_size[1] - 100)
-
+                    "content": ["Altitude: "],
+                    "position": (self.screen_size[0] + 300, self.screen_size[1] - 100)
                 }
             },
             "speed": {
-                "model": Slider(self.screen_size[0] + 50, self.screen_size[1] - 50, 200, 1, 1000, 1),
+                "model": Slider(self.screen_size[0] + 50, self.screen_size[1] - 50, 200, 10, 1000, 10),
                 "text": {
                     "content": ["Speed: ", " km/h"],
                     "position": (self.screen_size[0] + 300, self.screen_size[1] - 50)
-
                 }
             },
             "temperature": {
                 "model": Slider(self.screen_size[0] + 50, self.screen_size[1] - 150, 200, -50, 50, -10),
                 "text": {
-                    "content": ["temperature: ", "C"],
+                    "content": ["Temperature: ", "C"],
                     "position": (self.screen_size[0] + 300, self.screen_size[1] - 150)
-
                 }
             }
         }
 
-    def create_buttons(self,config):
-        return {"send_UFO":Button(self.screen_size[0] +  200, 150, 250, 100,"Send me",[200,200,200], [0,0,0],self.create_UFO)}
+    def create_buttons(self):
+        return {
+            "send_UFO": Button(self.screen_size[0] + 200, 25, 200, 50, "Send me", [200, 200, 200], [0, 0, 0],
+                               self.create_UFO)
+        }
 
-    def redner(self, screen):
+    def render(self, screen):
+
         for slider in self.sliders.values():
             model = slider["model"]
             model.render(screen)
             text = slider["text"]
             font = pygame.font.Font(None, 24)
-            screen.blit(font.render(f'{text["content"][0]} {round(model.get_value())} {text["content"][1] if len(text["content"]) > 1 else ""}', True, (0, 0, 0)), text["position"])
+            screen.blit(font.render(
+                f'{text["content"][0]} {round(model.get_value())} {text["content"][1] if len(text["content"]) > 1 else ""}',
+                True, (0, 0, 0)), text["position"])
         for button in self.buttons.values():
             button.render(screen)
         return {key: slider["model"].get_value() for key, slider in self.sliders.items()}

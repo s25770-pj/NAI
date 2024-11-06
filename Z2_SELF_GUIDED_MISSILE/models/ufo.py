@@ -17,6 +17,14 @@ class UFOManager:
         return list(self.UFOs.values())
 
 
+def altitude_to_y(altitude):
+    altitude = max(0, min(altitude, 10_000))
+    normalized_altitude = altitude / (10_000)
+    y_position = max((400-40) * (1 - normalized_altitude),0)
+
+    return round(y_position)
+
+
 class UFO(BaseModel):
     uuid: UUID = Field(default_factory=uuid4)
     speed: confloat() = None
@@ -35,10 +43,11 @@ class UFO(BaseModel):
         UFO.manager.add_instance(self)
     def move(self):
         self.x -= (self.speed * 0.0027778)
-        if self.x < 0:
+        if self.x+80 < 0:
             del UFO.manager.UFOs[self.uuid]
-    def move_y(self,position_y):
-        self.y=position_y
+
+    def move_y(self,altitude):
+        self.y= altitude_to_y(altitude)
     @classmethod
     def all(cls):
         return cls.manager.get_all()
