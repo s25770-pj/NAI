@@ -4,8 +4,10 @@ noise==1.2.2
 numpy==2.1.2
 packaging==24.1
 pydantic==2.9.2
+pydantic-settings==2.6.1
 pydantic_core==2.23.4
 pygame==2.6.1
+python-dotenv==1.0.1
 scikit-fuzzy==0.5.0
 scipy==1.14.1
 typing_extensions==4.12.2
