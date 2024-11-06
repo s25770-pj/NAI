@@ -30,6 +30,8 @@ class UFO(BaseModel):
     max_speed: confloat(gt=0) = None
     altitude: confloat() = None
     temperature: confloat() = None
+    width: confloat() = None
+    height: confloat() = None
     x: confloat() = None
     y: confloat() = None
     screen_width: conint(ge=0)

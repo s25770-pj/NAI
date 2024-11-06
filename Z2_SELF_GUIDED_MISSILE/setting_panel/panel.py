@@ -24,7 +24,8 @@ class Panel:
             temperature=self.sliders["temperature"]["model"].get_value(),
             x=self.screen_size[0] + 25,
             y=y_position-20,
-            screen_width=self.screen_size[0]
+            screen_width=self.screen_size[0],
+            width = 80, height = 40
         )
         print("Fly with altitude:", altitude, "and y-position:", y_position)
 
@@ -69,7 +70,6 @@ class Panel:
 
         for i in range(scale_interval, self.max_height-1, scale_interval):
             pygame.draw.line(screen, (0, 0, 0), (self.screen_size[0]-10,self.altitude_to_y(i)), (self.screen_size[0]+10, self.altitude_to_y(i)), 1)
-            print(f'{i} {self.altitude_to_y(i)}')
             font = pygame.font.Font(None, 16)
             text = font.render(str(i), True, (0, 0, 0))
             screen.blit(text, (self.screen_size[0]+10, self.altitude_to_y(i)-25))

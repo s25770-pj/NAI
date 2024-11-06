@@ -1,6 +1,7 @@
 import asyncio
 import json
 import pygame
+from scipy.signal.windows import lanczos
 
 from Z2_SELF_GUIDED_MISSILE.map.terrain import Terrain
 from Z2_SELF_GUIDED_MISSILE.setting_panel.panel import Panel
@@ -37,7 +38,7 @@ def create_launcher(config):
                         **LAUNCHER["DRAW"],
                         color=LAUNCHER["COLOR"],
                         range=LAUNCHER["SETUP"]["RANGE"],
-                        max_range=300)
+                        max_range=200)
     return launcher
 
 
@@ -57,7 +58,6 @@ async def scan_in_background(launcher):
     """Asynchronous task to run the scan function repeatedly."""
     while True:
         detected_ufo_in_range = await asyncio.to_thread(launcher.scan)
-        print(detected_ufo_in_range)
         await asyncio.sleep(1)  # Wait 1 second before scanning again
 
 
@@ -65,7 +65,7 @@ async def main_loop(screen, screen_width, config, panel, launcher):
     """Main game loop."""
     clock = pygame.time.Clock()
     model = UFO(speed=0, max_speed=600, altitude=500, temperature=70, x=screen_width + 25, y=1,
-                screen_width=config["GAME"]["screen_width"])
+                screen_width=config["GAME"]["screen_width"], width = 80, height = 40)
     terrain = Terrain(screen_width, config["MAP"])
 
     # Start the scan task asynchronously
@@ -90,11 +90,15 @@ async def main_loop(screen, screen_width, config, panel, launcher):
 
         altitude = values["altitude"]
         model.move_y(altitude)
-
+        launcher.draw(screen)
         for ufo in UFO.all():
+            if ufo.uuid != model.uuid:
+                pygame.draw.line(screen, (0, 0, 0), (ufo.x, ufo.y+ufo.height//2),
+                             (launcher.x, launcher.y), 1)
+
             screen.blit(image_model if ufo.uuid == model.uuid else image_plane, (ufo.x, ufo.y))
             ufo.move()
-        launcher.draw(screen)
+
 
         # Update the display
         pygame.display.flip()

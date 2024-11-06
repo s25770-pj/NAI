@@ -38,19 +38,26 @@ class Launcher(BaseModel):
         if len(self.missiles) >= self.missiles_limit:
             raise ValueError(f"Cannot add more missiles. Limit is {self.missiles_limit}.")
         self.missiles.append(missile)
+    def ufo_in_range(self):
+        detected_ufo_in_range = []
+        for ufo in UFO.all():
+            distance = ((ufo.x - self.x) ** 2 + (ufo.y+ufo.height//2 - self.y) ** 2) ** 0.5
+            print(f'{distance} <= {self.max_range}')
+            if distance <= self.max_range:
+                detected_ufo_in_range.append([ufo, distance])
+        print(len(detected_ufo_in_range))
+        return detected_ufo_in_range
 
     def scan(self):
         detected_ufo_in_range = []
-        for ufo in UFO.all():
+        for ufo_model in self.ufo_in_range():
             # Calculate distance
-            distance = ((ufo.x - self.x) ** 2 + (ufo.y - self.y) ** 2) ** 0.5
+            ufo,distance = ufo_model
             threat_level = calculate_threat_level(motion=1, weapon=1, distance=distance * 10)
             # TODO: Implement a separate model for warnings that will be displayed later
             shot_rightness = calculate_shot_rightness(threat_level_input=threat_level, speed_input=ufo.speed,
                                                       altitude_input=ufo.altitude)
             # TODO: Add check if armed and custom movement check
-            if distance * 10 <= self.max_range:
-                detected_ufo_in_range.append([ufo, distance * 10])
             if shot_rightness > 0.5:
                 required_missile = calculate_required_missile(distance_input=distance, speed_input=ufo.speed,
                                                               altitude_input=ufo.altitude)
@@ -59,6 +66,7 @@ class Launcher(BaseModel):
         #               f' Decision - threat_level: {round(threat_level, 2)}%,'
         #               f' shot_rightness: {round(shot_rightness, 2) * 100}%,'
         #               f' required_missile: {required_missile.serial_number if required_missile else None}')
+            #print(f'shot_rightness: {shot_rightness}')
         return detected_ufo_in_range
 
     def draw_dashed_circle(self, screen, color, center, radius, start_angle, end_angle, dash_length=10):
@@ -90,11 +98,10 @@ class Launcher(BaseModel):
         :param screen: The screen object where the launcher will be drawn.
         """
         deg = 360
-        self.draw_dashed_circle(screen, (255, 0, 0), (self.x, self.y), self.range["SHORT"], 180, deg)
-        self.draw_dashed_circle(screen, (200, 200, 0), (self.x, self.y), self.range["MEDIUM"], 180, deg)
-        self.draw_dashed_circle(screen, (0, 255, 0), (self.x, self.y), self.range["LONG"], 180, deg)
-
-        pygame.draw.rect(screen, self.color, (self.x - self.width // 2, self.y - self.height, self.width, self.height))
+        self.draw_dashed_circle(screen, (255, 0, 0), ((self.x), self.y), self.range["SHORT"], 180, deg)
+        self.draw_dashed_circle(screen, (200, 200, 0), ((self.x), self.y), self.range["MEDIUM"], 180, deg)
+        self.draw_dashed_circle(screen, (0, 255, 0), ((self.x), self.y), self.range["LONG"], 180, deg)
+        pygame.draw.rect(screen, self.color, (self.x-self.width//2, self.y-self.height//2, self.width, self.height))
 
     async def reload_missile(self, missile: Missile):
         """
