@@ -22,7 +22,6 @@ class Launcher(BaseModel):
     height: conint(ge=0)
     width: conint(ge=0)
     color: Tuple[int, int, int]
-
     range: Dict[str, int]
     max_range: conint(ge=0)
 

@@ -13,7 +13,9 @@ class Panel:
         self.buttons = self.create_buttons(config)
 
     def create_UFO(self):
-        UFO(speed=self.sliders["speed"]["model"].get_value(), max_speed=600, altitude=self.sliders["position_y"]["model"].get_value(),
+        UFO(speed=self.sliders["speed"]["model"].get_value(),
+            max_speed=600,
+            altitude=self.sliders["position_y"]["model"].get_value(),
             temperature=self.sliders["temperature"]["model"].get_value(),
             x=self.screen_size[0] + 50, y=self.sliders["position_y"]["model"].get_value(),
             screen_width=self.screen_size[0])
@@ -21,26 +23,26 @@ class Panel:
     def create_sliders(self,config):
         return {
             "position_y":{
-                "model":Slider(self.screen_size[0] + 50, self.screen_size[1] - 100, 250, 15, config["height"], 15),
+                "model":Slider(self.screen_size[0] + 50, self.screen_size[1] - 100, 200, 15, config["height"], 15),
                 "text": {
-                    "content":["position Y: "],
-                    "position":(self.screen_size[0] + 350, self.screen_size[1] - 100)
+                    "content":["Altitude: "],
+                    "position":(self.screen_size[0] + 300, self.screen_size[1] - 100)
 
                 }
             },
             "speed": {
-                "model": Slider(self.screen_size[0] + 50, self.screen_size[1] - 50, 250, 1, 2000, 1),
+                "model": Slider(self.screen_size[0] + 50, self.screen_size[1] - 50, 200, 1, 1000, 1),
                 "text": {
                     "content": ["Speed: ", " km/h"],
-                    "position": (self.screen_size[0] + 350, self.screen_size[1] - 50)
+                    "position": (self.screen_size[0] + 300, self.screen_size[1] - 50)
 
                 }
             },
             "temperature": {
-                "model": Slider(self.screen_size[0] + 50, self.screen_size[1] - 150, 250, 30, 300, 30),
+                "model": Slider(self.screen_size[0] + 50, self.screen_size[1] - 150, 200, -50, 50, -10),
                 "text": {
                     "content": ["temperature: ", "C"],
-                    "position": (self.screen_size[0] + 350, self.screen_size[1] - 150)
+                    "position": (self.screen_size[0] + 300, self.screen_size[1] - 150)
 
                 }
             }
@@ -55,7 +57,7 @@ class Panel:
             model.render(screen)
             text = slider["text"]
             font = pygame.font.Font(None, 24)
-            screen.blit(font.render(f'{text["content"][0]} {round(model.get_value())}', True, (0, 0, 0)), text["position"])
+            screen.blit(font.render(f'{text["content"][0]} {round(model.get_value())} {text["content"][1] if len(text["content"]) > 1 else ""}', True, (0, 0, 0)), text["position"])
         for button in self.buttons.values():
             button.render(screen)
         return {key: slider["model"].get_value() for key, slider in self.sliders.items()}

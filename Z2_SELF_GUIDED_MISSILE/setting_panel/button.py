@@ -23,5 +23,3 @@ class Button:
             if event.button == 1:  # Lewy przycisk myszy
                 if self.is_clicked(event.pos) and self.action:
                     self.action()
-                else:
-                    print(f"{self.text} was clicked!")
