@@ -1,6 +1,6 @@
 # Authors 
 Jakub Pobłocki |  Kacper Pecka
-# Automatic Anty Aircraft System
+# Automatic Anti-Aircraft System
 
 The system, as its name suggests, is an automated anti-aircraft defense mechanism that leverages fuzzy logic to assess and respond to airborne threats. It is structured into three distinct computational modules:
 
