@@ -24,7 +24,7 @@ class Launcher(BaseModel):
     color: Tuple[int, int, int]
     range: Dict[str, int]
     max_range: conint(ge=0)
-
+    danger_level: conint() = None
     @property
     def loaded_missiles(self) -> List[Missile]:
         return [missile for missile in self.missiles if not missile.is_launched]
@@ -41,33 +41,38 @@ class Launcher(BaseModel):
     def ufo_in_range(self):
         detected_ufo_in_range = []
         for ufo in UFO.all():
-            distance = ((ufo.x - self.x) ** 2 + (ufo.y+ufo.height//2 - self.y) ** 2) ** 0.5
-            print(f'{distance} <= {self.max_range}')
+            distance = ((self.x - (ufo.x if self.x < ufo.x + ufo.width // 2 else ufo.x + ufo.width)) ** 2 + (
+                        ufo.y + ufo.height // 2 - self.y) ** 2) ** 0.5
+
+            #print(f'{distance} <= {self.max_range}')
             if distance <= self.max_range:
                 detected_ufo_in_range.append([ufo, distance])
-        print(len(detected_ufo_in_range))
         return detected_ufo_in_range
 
     def scan(self):
-        detected_ufo_in_range = []
+        scan_ufo = []
         for ufo_model in self.ufo_in_range():
             # Calculate distance
             ufo,distance = ufo_model
             threat_level = calculate_threat_level(motion=1, weapon=1, distance=distance * 10)
             # TODO: Implement a separate model for warnings that will be displayed later
             shot_rightness = calculate_shot_rightness(threat_level_input=threat_level, speed_input=ufo.speed,
-                                                      altitude_input=ufo.altitude)
+                                                   altitude_input=ufo.altitude)
             # TODO: Add check if armed and custom movement check
+            required_missile=0
             if shot_rightness > 0.5:
                 required_missile = calculate_required_missile(distance_input=distance, speed_input=ufo.speed,
                                                               altitude_input=ufo.altitude)
                 required_missile = self.get_missile_by_fuzzy_value(required_missile)
+            scan_ufo.append([ufo,threat_level,shot_rightness,required_missile])
         #         print(f'Launcher: {self.uuid} detected UFO, details: {ufo.uuid} |'
         #               f' Decision - threat_level: {round(threat_level, 2)}%,'
         #               f' shot_rightness: {round(shot_rightness, 2) * 100}%,'
         #               f' required_missile: {required_missile.serial_number if required_missile else None}')
+
             #print(f'shot_rightness: {shot_rightness}')
-        return detected_ufo_in_range
+
+        return scan_ufo
 
     def draw_dashed_circle(self, screen, color, center, radius, start_angle, end_angle, dash_length=10):
         """ Rysuje przerywane okręgi na powierzchni. """
