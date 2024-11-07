@@ -75,7 +75,7 @@ These visual cues help the operator quickly assess the threat and take appropria
 
 ## An example of what the simulation looks like
 [Watch the demo video](https://youtu.be/cHLMgfb8OpE)
-
+https://github.com/s25770-pj/NAI_CHOMP/blob/main/Z2_SELF_GUIDED_MISSILE/video/demo.mp4
 ## Prerequisites
 - Ensure that Python is installed on your computer. You can download it from [python.org](https://www.python.org/downloads/).
 
