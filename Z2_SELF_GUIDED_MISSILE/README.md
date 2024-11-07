@@ -4,7 +4,7 @@ Jakub Pobłocki |  Kacper Pecka
 # Automated Anti-Aircraft Defense System
 
 ## Description
-The Automated Anti-Aircraft Defense System leverages **fuzzy logic** to assess and respond to airborne threats. The system is structured into three distinct modules that work in sequence to ensure a swift, accurate, and efficient response to incoming threats.
+The Automated Anti-Aircraft Defense System leverages **fuzzy logic** to assess and respond to airborne threats. The system is structured into three modules that work closely together to ensure a swift, accurate, and efficient response to incoming threats.
 
 ## Modules
 

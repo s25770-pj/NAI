@@ -1,3 +1,8 @@
+#Authors: Jakub Pobłocki s25770, Kacper Pecka s25668
+
+#All necessary information is available at:
+#https://github.com/s25770-pj/NAI_CHOMP/blob/main/Z2_SELF_GUIDED_MISSILE/README.md
+
 import asyncio
 import json
 import pygame
