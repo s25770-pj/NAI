@@ -6,15 +6,10 @@ from Z2_SELF_GUIDED_MISSILE.setting_panel.panel import Panel
 from Z2_SELF_GUIDED_MISSILE.models.missile import Missile
 from models.launcher import Launcher
 from Z2_SELF_GUIDED_MISSILE.models.ufo import UFO
+import threading
 
 
 def initialize_game(config):
-    """
-    Initializes the game window with the given configuration.
-
-    :param config: Dictionary containing game configuration.
-    :return: Tuple (screen, screen_width, screen_height).
-    """
     pygame.init()
     screen_width, screen_height = config["GAME"]["screen_width"], config["GAME"]["screen_height"]
     screen = pygame.display.set_mode((screen_width * 2, screen_height))
@@ -23,12 +18,6 @@ def initialize_game(config):
 
 
 def load_missiles(launcher, types):
-    """
-    Loads missile types into the launcher.
-
-    :param launcher: The launcher object.
-    :param types: Dictionary containing missile type configurations.
-    """
     missile1 = Missile(**types['LONG_RANGE'], type='long', x=launcher.x, y=launcher.y)
     missile2 = Missile(**types['SHORT_RANGE'], type='short', x=launcher.x, y=launcher.y)
     missile3 = Missile(**types['MEDIUM_RANGE'], type='medium', x=launcher.x, y=launcher.y)
@@ -38,14 +27,8 @@ def load_missiles(launcher, types):
 
 
 def create_launcher(config):
-    """
-    Creates and returns a launcher object based on the configuration.
-
-    :param config: Dictionary containing launcher configuration.
-    :return: Launcher object.
-    """
     LAUNCHER = config["LAUNCHER"]
-    launcher = Launcher(
+    return Launcher(
         missiles_limit=5,
         default_reload_time=1,
         **LAUNCHER["DRAW"],
@@ -53,16 +36,9 @@ def create_launcher(config):
         range=LAUNCHER["SETUP"]["RANGE"],
         max_range=200
     )
-    return launcher
 
 
 async def handle_events(panel):
-    """
-    Handles user input events, including sliders and buttons.
-
-    :param panel: The panel containing UI elements.
-    :return: False if the quit event is detected, True otherwise.
-    """
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False
@@ -73,27 +49,17 @@ async def handle_events(panel):
     return True
 
 
-async def scan_in_background(launcher, detected_ufo_list):
-    """
-    Continuously scans for UFOs within range in the background.
-
-    :param launcher: The launcher performing the scan.
-    :param detected_ufo_list: List to store detected UFOs.
-    """
-    while True:
-        detected_ufo_in_range = await asyncio.to_thread(launcher.scan)
-        detected_ufo_list.clear()
-        detected_ufo_list.extend(detected_ufo_in_range)
-        await asyncio.sleep(0.5)
+def scan_in_background(launcher, detected_ufo_list):
+    def scan():
+        while True:
+            detected_ufo_in_range = launcher.scan()
+            detected_ufo_list.clear()
+            detected_ufo_list.extend(detected_ufo_in_range)
+            pygame.time.wait(500)  # Zmniejsza częstotliwość skanowania do 0.5 sekundy
+    threading.Thread(target=scan, daemon=True).start()  # Użycie wątku, aby nie blokować głównej pętli gry
 
 
 def get_threat_level_color(threat_level):
-    """
-    Returns the appropriate color based on the threat level.
-
-    :param threat_level: Threat level as a float (0-100).
-    :return: RGB tuple representing the color.
-    """
     if threat_level <= 40:
         return (0, 255, 0)
     elif threat_level <= 75:
@@ -103,12 +69,6 @@ def get_threat_level_color(threat_level):
 
 
 def draw_detected_ufo(detected_ufo_in_range, screen):
-    """
-    Draws the detected UFOs along with threat level indicators.
-
-    :param detected_ufo_in_range: List of detected UFOs and their attributes.
-    :param screen: The game screen.
-    """
     for ufo, threat_level, shot_rightness, required_missile in detected_ufo_in_range:
         rect = pygame.Rect(ufo.x - 10, ufo.y - 10, ufo.width + 20, ufo.height + 20)
         pygame.draw.rect(screen, (255, 0, 0), rect, 2)
@@ -129,21 +89,12 @@ def draw_detected_ufo(detected_ufo_in_range, screen):
 
 
 async def main_loop(screen, screen_width, config, panel, launcher):
-    """
-    Main game loop to handle rendering and logic.
-
-    :param screen: The game screen.
-    :param screen_width: The width of the game screen.
-    :param config: Dictionary containing game configuration.
-    :param panel: The UI panel.
-    :param launcher: The launcher object.
-    """
     clock = pygame.time.Clock()
     model = UFO(speed=0, max_speed=600, altitude=500, temperature=70, x=screen_width + 25, y=1,
                 screen_width=config["GAME"]["screen_width"], width=80, height=40)
     terrain = Terrain(screen_width, config["MAP"])
     detected_ufo_list = []
-    asyncio.create_task(scan_in_background(launcher, detected_ufo_list))
+    scan_in_background(launcher, detected_ufo_list)  # Rozpoczynamy skanowanie w tle
 
     image_plane = pygame.image.load('texture/plane.png')
     image_plane = pygame.transform.scale(image_plane, (80, 40))
@@ -155,7 +106,7 @@ async def main_loop(screen, screen_width, config, panel, launcher):
             break
         ufo_list = UFO.all()
         terrain.render(screen)
-        values = panel.render(screen,ufo_list)
+        values = panel.render(screen, ufo_list)
         altitude = values["altitude"]
         model.move_y(altitude)
         launcher.draw(screen)
@@ -171,9 +122,6 @@ async def main_loop(screen, screen_width, config, panel, launcher):
 
 
 if __name__ == '__main__':
-    """
-    Entry point for the game. Initializes components and starts the main loop.
-    """
     with open('./config.json', 'r') as file:
         config = json.load(file)
 

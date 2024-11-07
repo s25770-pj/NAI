@@ -74,7 +74,7 @@ The system includes an enhanced radar module that detects UFOs within a specifie
 These visual cues help the operator quickly assess the threat and take appropriate action, enabling efficient response during critical moments.
 
 ## An example of what the simulation looks like
-[Watch the demo video](https://www.youtube.com/watch?v=cXyvpk7H4s8)
+[Watch the demo video](https://youtu.be/cHLMgfb8OpE)
 
 ## Prerequisites
 - Ensure that Python is installed on your computer. You can download it from [python.org](https://www.python.org/downloads/).

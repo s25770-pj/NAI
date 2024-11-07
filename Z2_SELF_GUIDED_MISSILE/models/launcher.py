@@ -82,10 +82,10 @@ class Launcher(BaseModel):
             shot_rightness = calculate_shot_rightness(threat_level_input=threat_level, speed_input=ufo.speed,
                                                       altitude_input=ufo.altitude)
             required_missile = 0
-            if shot_rightness > 0.5:
-                required_missile = calculate_required_missile(distance_input=distance, speed_input=ufo.speed,
-                                                              altitude_input=ufo.altitude)
-                required_missile = self.get_missile_by_fuzzy_value(required_missile)
+            # if shot_rightness > 0.5:
+                # required_missile = calculate_required_missile(distance_input=distance, speed_input=ufo.speed,
+                #                                              altitude_input=ufo.altitude)
+                # required_missile = self.get_missile_by_fuzzy_value(required_missile)
             scan_ufo.append([ufo, threat_level, shot_rightness, required_missile])
 
         return scan_ufo

@@ -54,7 +54,8 @@ class Panel:
             y=y_position - 20,
             screen_width=self.screen_size[0],
             width=80,
-            height=40
+            height=40,
+            weapon=self.sliders["weapon"]["model"].get_value()
         )
 
     def altitude_to_y(self, altitude):
@@ -176,7 +177,7 @@ class Panel:
             details = [
                 f"Altitude: {round(self.selected_ufo.altitude)} m",
                 f"Speed: {round(self.selected_ufo.speed)} km/h",
-                f"Weapon: {"yes" if self.selected_ufo.weapon else "no"}"
+                f"Weapon: {"yes" if self.selected_ufo.weapon == 1 else "no"}"
             ]
             image_plane = pygame.image.load('texture/plane.png')
             image_plane = pygame.transform.scale(image_plane, (160, 80))
