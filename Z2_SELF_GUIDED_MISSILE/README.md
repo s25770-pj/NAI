@@ -76,6 +76,7 @@ These visual cues help the operator quickly assess the threat and take appropria
 ## An example of what the simulation looks like
 <video width="600" controls>
   <source src="video/demo.mp4" type="video/mp4">
+   your website does not support video
 </video>
 
 ## Prerequisites
