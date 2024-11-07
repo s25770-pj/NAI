@@ -45,7 +45,7 @@ class Panel:
                 }
             },
             "speed": {
-                "model": Slider(self.screen_size[0] + 50, self.screen_size[1] - 50, 200, 10, 1000, 10),
+                "model": Slider(self.screen_size[0] + 50, self.screen_size[1] - 50, 200, 10, 1500, 10),
                 "text": {
                     "content": ["Speed: ", " km/h"],
                     "position": (self.screen_size[0] + 300, self.screen_size[1] - 50)

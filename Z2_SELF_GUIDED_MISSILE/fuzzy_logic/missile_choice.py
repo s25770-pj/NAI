@@ -16,10 +16,10 @@ speed['slow'] = fuzz.trimf(speed.universe, [0, 0, 500])
 speed['medium'] = fuzz.trimf(speed.universe, [250, 500, 750])
 speed['fast'] = fuzz.trimf(speed.universe, [500, 1500, 1500])
 
-altitude = ctrl.Antecedent(np.arange(0, 20001, 1), 'altitude')
+altitude = ctrl.Antecedent(np.arange(0, 10001, 1), 'altitude')
 altitude['low'] = fuzz.trimf(altitude.universe, [0, 0, 1000])
 altitude['medium'] = fuzz.trimf(altitude.universe, [500, 1000, 5000])
-altitude['high'] = fuzz.trimf(altitude.universe, [4000, 20000, 20000])
+altitude['high'] = fuzz.trimf(altitude.universe, [4000, 10000, 10000])
 
 # Consequent
 missile_type = ctrl.Consequent(np.arange(0, 3, 1), 'fire_missile')

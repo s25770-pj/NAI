@@ -54,7 +54,7 @@ class Launcher(BaseModel):
         for ufo_model in self.ufo_in_range():
             # Calculate distance
             ufo,distance = ufo_model
-            threat_level = calculate_threat_level(motion=1, weapon=1, distance=distance * 10)
+            threat_level = calculate_threat_level(motion=1, weapon=0, distance=distance * 10)
             # TODO: Implement a separate model for warnings that will be displayed later
             shot_rightness = calculate_shot_rightness(threat_level_input=threat_level, speed_input=ufo.speed,
                                                    altitude_input=ufo.altitude)

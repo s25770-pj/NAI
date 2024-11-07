@@ -15,10 +15,10 @@ weapon = ctrl.Antecedent(np.array([0, 1]), 'weapon')  # 0: Unarmed, 1: Armed
 weapon['unarmed'] = fuzz.trimf(weapon.universe, [0, 0, 0])
 weapon['armed'] = fuzz.trimf(weapon.universe, [1, 1, 1])
 
-distance = ctrl.Antecedent(np.arange(0, 100001, 1), 'distance')
-distance['close'] = fuzz.trimf(distance.universe, [0, 0, 5000])
-distance['medium'] = fuzz.trimf(distance.universe, [5000, 20000, 50000])
-distance['far'] = fuzz.trimf(distance.universe, [20000, 100000, 100000])
+distance = ctrl.Antecedent(np.arange(0, 2001, 1), 'distance')
+distance['close'] = fuzz.trimf(distance.universe, [0, 0, 1000])
+distance['medium'] = fuzz.trimf(distance.universe, [1000, 1500, 2000])
+distance['far'] = fuzz.trimf(distance.universe, [1500, 2000, 2000])
 
 # Consequent
 threat_level = ctrl.Consequent(np.arange(0, 101, 1), 'threat_level')
