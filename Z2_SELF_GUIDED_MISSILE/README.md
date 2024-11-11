@@ -92,6 +92,7 @@ Make sure you have the following libraries installed:
 - `scipy`
 
 You can install the required libraries using the command:
+Firstly you have to create and activate virtual environment.
 Before running the command, navigate to the `Z2_SELF_GUIDED_MISSILE` directory.
 
 ```bash
