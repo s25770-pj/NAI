@@ -9,7 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 with open('data/dataset.json', 'r') as f:
     dataset = json.load(f)
 
-def get_titles_and_ratings(name1, name2):
+def get_ratings_and_titles(name1, name2):
     """
     extracts the film titles and ratings for two given users from the dataset.
 
@@ -52,9 +52,9 @@ def create_rating_sets(ratings1, ratings2):
     :param ratings2: Ratings of the second user.
     :return: Two numpy arrays (rating_set_1 and rating_set_2) of shape (n_samples, 1).
     """
-    rating1 = np.array(ratings1).reshape(-1, 1)
-    rating2 = np.array(ratings2).reshape(-1, 1)
-    return rating1, rating2
+    rating_set_1 = np.array(ratings1).reshape(-1, 1)
+    rating_set_2 = np.array(ratings2).reshape(-1, 1)
+    return rating_set_1, rating_set_2
 
 
 def concatenate_ratings(ratings1, ratings2, titles1, titles2):
@@ -69,14 +69,14 @@ def concatenate_ratings(ratings1, ratings2, titles1, titles2):
     """
     rating_set_1, rating_set_2 = create_rating_sets(ratings1, ratings2)
     titles = titles1 + titles2
-    X = convert_titles_into_vectors(titles)
+    title_vectors = convert_titles_into_vectors(titles)
 
-    X_set_1 = np.hstack((X[:len(titles1)].toarray(), rating_set_1))
+    X_set_1 = np.hstack((title_vectors[:len(titles1)].toarray(), rating_set_1))
 
     if len(titles2) > 0:
-        X_set_2 = np.hstack((X[len(titles1):len(titles1) + len(titles2)].toarray(), rating_set_2))
+        X_set_2 = np.hstack((title_vectors[len(titles1):len(titles1) + len(titles2)].toarray(), rating_set_2))
     else:
-        X_set_2 = np.empty((0, X.shape[1]))  # Empty array if titles2 is empty
+        X_set_2 = np.empty((0, title_vectors.shape[1]))  # Empty array if titles2 is empty
 
     return X_set_1, X_set_2
 
@@ -98,7 +98,6 @@ def standardize_ratings(ratings1, ratings2, titles1, titles2):
     ratings1_data = X_set_1[:, -1].reshape(-1, 1)
     ratings2_data = X_set_2[:, -1].reshape(-1, 1)
 
-    # standardize the ratings data
     scaler = StandardScaler()
 
     # scale ratings

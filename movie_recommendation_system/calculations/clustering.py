@@ -35,6 +35,7 @@ def optimal_k(X_combined):
     :param X_combined: The dataset for clustering.
     :return: The optimal number of clusters based on silhouette score.
     """
+    # TODO: nie wiem czy to sie przyda, poczatkowo mialo to miec mozliwosc porownywania wszystkich na raz
     max_score = -1
     best_k = 2
 
