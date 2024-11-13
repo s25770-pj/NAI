@@ -22,13 +22,13 @@ def get_ratings_and_titles(name1, name2):
         - 'ratings2': List of ratings given by the second user.
     """
     # extract titles
-    film_titles1 = [title for obj in dataset if obj['name'] == f'{name1}' for title in obj['ratings']]
-    film_titles2 = [title for obj in dataset if obj['name'] == f'{name2}' for title in obj['ratings']]
+    titles1 = [title for obj in dataset if obj['name'] == f'{name1}' for title in obj['ratings']]
+    titles2 = [title for obj in dataset if obj['name'] == f'{name2}' for title in obj['ratings']]
 
     # extract ratings
-    film_ratings1 = [rating for obj in dataset if obj['name'] == f'{name1}' for rating in obj['ratings'].values()]
-    film_ratings2 = [rating for obj in dataset if obj['name'] == f'{name2}' for rating in obj['ratings'].values()]
-    return  film_ratings1, film_ratings2, film_titles1, film_titles2
+    ratings1 = [rating for obj in dataset if obj['name'] == f'{name1}' for rating in obj['ratings'].values()]
+    ratings2 = [rating for obj in dataset if obj['name'] == f'{name2}' for rating in obj['ratings'].values()]
+    return ratings1, ratings2, titles1, titles2
 
 
 def convert_titles_into_vectors(titles):
