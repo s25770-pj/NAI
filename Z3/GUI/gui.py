@@ -18,7 +18,8 @@ CARD_OFFSET = 40
 card_offset = CARD_OFFSET
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Movie Recommendation System')
-
+max_scroll_offset=0
+scroll_offset = 0
 # Define fonts
 font = pygame.font.SysFont('Arial', 20)
 font_button = pygame.font.SysFont('Arial', 25)
@@ -70,6 +71,10 @@ def set_display_recommend(setting,id_button):
     global display_recommend
     global card_height
     global card_offset
+    global max_scroll_offset
+    global scroll_offset
+    scroll_offset = 0
+    max_scroll_offset=0
     display_recommend = setting
     for i,button in enumerate(buttons):
         if id_button == i:
@@ -91,13 +96,13 @@ def set_display_recommend(setting,id_button):
 
 # Main function to run the Pygame interface
 def run_gui(dataset, recommend_function):
+    global scroll_offset
+    global max_scroll_offset
     user_dropdown = list(dataset.keys())
     selected_user = None
     list_open = False
-    scroll_offset = 0
     dropdown_button = pygame.Rect(20, 50, 200, 30)
     user_buttons = []
-    max_scroll_offset=0
     running = True
     while running:
         for event in pygame.event.get():
@@ -125,7 +130,6 @@ def run_gui(dataset, recommend_function):
         content_y_offset = 130 - scroll_offset
         if selected_user is not None:
             recommended_movies, non_recommended_movies = recommend_function(dataset, selected_user)
-            max_scroll_offset = content_y_offset+card_offset
 
             if display_recommend[2]:
                 for i, movie in enumerate(recommended_movies):
