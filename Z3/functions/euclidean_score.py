@@ -2,8 +2,8 @@ import json
 import numpy as np
 
 
-with open('../data/dataset.json', 'r') as f:
-    dataset = json.loads(f.read())
+with open('data/dataset.json', 'r', encoding='utf-8') as f:
+    dataset = json.load(f)
 
 
 def euclidean_distance(user_ratings, other_ratings):

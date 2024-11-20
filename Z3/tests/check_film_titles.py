@@ -2,7 +2,7 @@ import requests
 import json
 
 
-api_key = ""
+api_key = "da2b34ef"
 
 
 def search_film_by_title(title, api_key=api_key):

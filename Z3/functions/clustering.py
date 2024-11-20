@@ -3,13 +3,10 @@ import numpy as np
 
 from sklearn.cluster import KMeans
 from sklearn.impute import SimpleImputer
-from euclidean_score import euclidean_distance
+from functions.euclidean_score import euclidean_distance
 
 
-with open('../data/dataset.json', 'r') as f:
-    dataset = json.loads(f.read())
-
-def prepare_ratings_matrix(target_user_name, n_clusters=3):
+def prepare_ratings_matrix(dataset,target_user_name, n_clusters=3):
     all_movies = set()
     ratings = []
 
@@ -44,12 +41,14 @@ def prepare_ratings_matrix(target_user_name, n_clusters=3):
     # get cluster members' ratings and compute average ratings for each movie
     cluster_ratings = ratings_matrix[cluster_members_indices]
 
+    # set a default score for movies that have no ratings at all in the cluster
+    global_mean_rating = np.nanmean(ratings_matrix)
+
     # calculate average ratings with careful handling of NaNs
     with np.errstate(all='ignore'):
         avg_ratings_cluster = np.nanmean(cluster_ratings, axis=0)
+        avg_ratings_cluster = np.where(np.isnan(avg_ratings_cluster), global_mean_rating, avg_ratings_cluster)
 
-    # set a default score for movies that have no ratings at all in the cluster
-    global_mean_rating = np.nanmean(ratings_matrix)
     avg_ratings_cluster = np.where(np.isnan(avg_ratings_cluster), global_mean_rating, avg_ratings_cluster)
 
     # get ratings of the target user to identify movies they haven't rated
