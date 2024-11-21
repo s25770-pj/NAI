@@ -1,5 +1,3 @@
-from idlelib.configdialog import changes
-
 import pygame
 import requests
 import asyncio
